@@ -1,0 +1,9 @@
+НОВОЕ:
+Проверены функции 
+ASCII_to_LCDcode(ASCIIcode):LCDcode
+Convert_ASCII_to_LCD(lcd_data_addr, ASCII_data)!!!НО БЕЗ ЗАПЯТЫХ
+Data_to_LCD(lcd_data_addr)
+PrintMsg(MsgAddr) !!!НО БЕЗ ЗАПЯТЫХ
+
+ПРЕДЫДУЩЕЕ:
+дублируются данные подаваемые с весов

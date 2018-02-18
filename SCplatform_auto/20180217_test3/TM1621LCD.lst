@@ -1,0 +1,1795 @@
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001         list p=16f887
+                      00002         include <p16f887.inc>
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F887 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00809         LIST
+  0000                00003         extern pause_5us, pause_3us ;<pauses_20MHz.asm> 
+  0000                00004         global simb_pos, Display_Data
+  0000                00005         global init_LCD, LCD_Data_Duplicate, Data_to_LCD
+  0000                00006         global LCD_ON, LCD_OFF, PrintSimb, PrintMsg
+  0000                00007         global PrintFirstStr, PrintSecondStr, PrintThirdStr
+                      00008 ;       global SetKoma, ClrKoma, KomaPos, koma_set
+                      00009 
+                      00010         #define CS PORTB,4
+                      00011         #define WR PORTB,5
+                      00012         #define DATA_PIN PORTB,7
+                      00013 
+                      00014 ;коды дисплея
+                      00015         include <TM1621.inc>
+                      00001 ;-----таблица соответсвия символов чтобы легко было менять для других индикаторов------------
+  0000007D            00002 simb0 equ 0x7D ;код символа "0"
+  00000060            00003 simb1 equ 0x60 ;код символа "1" 
+  0000003E            00004 simb2 equ 0x3E ;код символа "2"
+  0000007A            00005 simb3 equ 0x7A ;код символа "3"
+  00000063            00006 simb4 equ 0x63 ;код символа "4"
+  0000005B            00007 simb5 equ 0x5B ;код символа "5","S"
+  0000005F            00008 simb6 equ 0x5F ;код символа "6"
+  00000070            00009 simb7 equ 0x70 ;код символа "7"
+  0000007F            00010 simb8 equ 0x7F ;код символа "8"
+  0000007B            00011 simb9 equ 0x7B ;код символа "9"
+  000000FD            00012 simb0_ equ 0xFD ;код символа ".0"
+  000000E0            00013 simb1_ equ 0xE0 ;код символа ".1"
+  000000BE            00014 simb2_ equ 0xBE ;код символа ".2"
+  000000FA            00015 simb3_ equ 0xFA ;код символа ".3"
+  000000E3            00016 simb4_ equ 0xE3 ;код символа ".4"
+  000000DB            00017 simb5_ equ 0xDB ;код символа ".5"
+  000000DF            00018 simb6_ equ 0xDF ;код символа ".6"
+  000000F0            00019 simb7_ equ 0xF0 ;код символа ".7"
+  000000FF            00020 simb8_ equ 0xFF ;код символа ".8"
+  000000FB            00021 simb9_ equ 0xFB ;код символа ".9"
+  00000077            00022 simbA equ 0x77 ;код символа "A"
+  0000004F            00023 simbb equ 0x4F ;код символа "b"
+  0000001D            00024 simbC equ 0x1D ;код символа "C"
+  0000006E            00025 simbd equ 0x6E ;код символа "d"
+  0000001F            00026 simbE equ 0x1F ;код символа "E"
+  00000017            00027 simbF equ 0x17 ;код символа "F"
+  0000005D            00028 simbG equ 0x5D ;код символа "G"
+  00000067            00029 simbH equ 0x67 ;код символа "H"
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  0000006C            00030 simbJ equ 0x6C ;код символа "J"
+  0000000D            00031 simbL equ 0x0D ;код символа "L"
+  00000046            00032 simbn equ 0x46 ;код символа "n"
+  00000037            00033 simbP equ 0x37 ;код символа "P"
+  00000006            00034 simbr equ 0x06 ;код символа "r"
+  0000000F            00035 simbt equ 0x0F ;код символа "t"
+  0000006D            00036 simbU equ 0x6D ;код символа "U"
+  0000006B            00037 simbY equ 0x6B ;код символа "Y"
+  00000002            00038 simbmin equ 0x02 ;код символа "минус"
+  00000000            00039 empty equ 0x00 ;код символа "пусто"
+                      00016 
+                      00017         udata
+0000                  00018 simb_pos        res 1
+0001                  00019 Display_Data res .16 ;область содержащая коды для вывода на экран
+                      00020 ;KomaPos                res 1
+                      00021         udata_ovr
+0000                  00022 temp            res 1
+0001                  00023 buf_temp        res 1
+0002                  00024 counter         res 1
+0003                  00025 simb_temp       res 1
+0004                  00026 ASCII_buf       res 1
+                      00027 ;temp2          res 1
+                      00028 ;------------------------------------------------------------------------------
+                      00029 ;макросы
+                      00030 ;-----------------------------------------------------------------
+                      00031 ;установка банка 0
+                      00032 SET_BANK0 MACRO 
+                      00033         bcf STATUS, RP0
+                      00034         bcf STATUS, RP1 
+                      00035         ENDM
+                      00036 ;---------------------------------------------------------------------
+                      00037         code
+                      00038 ;-----------------------------------------------------------------------
+0000                  00039 init_LCD;инициализация дисплея
+                      00040         SET_BANK0
+0000   1283               M         bcf STATUS, RP0
+0001   1303               M         bcf STATUS, RP1 
+0002   1606           00041         bsf CS
+0003   1286           00042         bcf WR
+0004   ???? ???? 2??? 00043         lcall pause_5us 
+0007   ???? ???? 2??? 00044         lcall SYS_EN ;команда SYS EN согласно документации на драйвер 100 000000011
+000A   ???? ???? 2??? 00045         lcall RC_256K ;команда RC_256K согласно документации на драйвер 100 000110000
+000D   ???? ???? 2??? 00046         lcall BIAS_1_3 ;команда BIAS ab=10:4 LCD 1/3 согласно документации на драйвер 100 001010011
+0010   ???? ???? 2??? 00047         lcall LCD_OFF ;команда LCD OFF согласно документации на драйвер 100 000000100
+0013   ???? ???? 2??? 00048         lcall TONE4K
+0016   ???? ???? 2??? 00049         lcall TNORMAL
+0019   ???? ???? 2??? 00050         lcall LCD_ON ;команда LCD ON согласно документации на драйвер 100 000000111
+001C   0008           00051         return
+                      00052 ;-------------------------------------------------------------------------
+                      00053 ;LCD_Data_Duplicate(lcd_data_addr)
+                      00054 ;lcd_data_addr - адрес ячейки начиная с которой располагается буфер считанных с весов данных 
+                      00055 ;lcd_data_addr перед вызовом процедуры записывается в аккумулятор
+001D                  00056 LCD_Data_Duplicate
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001D   ???? ????      00057         banksel buf_temp
+001F   00??           00058         movwf buf_temp
+0020   3E12           00059         addlw .18 ;bufer_count (LCD_bufer+18)
+0021   0084           00060         movwf FSR
+0022   0800           00061         movf INDF, 0
+0023   00??           00062         movwf temp ;temp=bufer_count т.к. он идет сразу после самого буфера
+0024   08??           00063         movf buf_temp, 0
+0025   0084           00064         movwf FSR
+                      00065         SET_BANK0
+0026   1283               M         bcf STATUS, RP0
+0027   1303               M         bcf STATUS, RP1 
+0028   1206           00066         bcf CS 
+0029   ???? ???? 2??? 00067         lcall pause_5us ;пауза 5 мкс
+002C   ???? ????      00068         pagesel $
+002E   ???? ????      00069         banksel counter
+0030                  00070 next_dupl_byte
+0030   3008           00071         movlw .8
+0031   00??           00072         movwf counter
+0032                  00073 next_dupl_bit
+0032   1F80           00074         btfss INDF,7
+0033   2???           00075         goto zero_dupl
+0034   2???           00076         call SET_ONE ;подача логической единицы на драйвер дисплея
+0035                  00077 test_dupl_bit
+0035   ???? ????      00078         banksel temp
+0037   0B??           00079         decfsz temp,1 
+0038   2???           00080         goto next_dupl ;если не все принятые биты переданы идем на передачу
+                      00081         SET_BANK0
+0039   1283               M         bcf STATUS, RP0
+003A   1303               M         bcf STATUS, RP1 
+003B   1606           00082         bsf CS ;если все CS=1 и выходим
+003C   0008           00083         return
+003D                  00084 next_dupl
+003D   0D80           00085         rlf INDF,1 ;
+003E   0B??           00086         decfsz counter,1 
+003F   2???           00087         goto next_dupl_bit ;если еще не передан очередной байт
+0040   0A84           00088         incf FSR,1
+0041   2???           00089         goto next_dupl_byte
+0042                  00090 zero_dupl
+0042   2???           00091         call SET_ZERO ;подача логического нуля на драйвер дисплея       
+0043   2???           00092         goto test_dupl_bit
+                      00093 ;-------------------------------------------------------------------
+                      00094 ;Отправка данных буфера в дисплей
+                      00095 ;Data_to_LCD(lcd_data_addr)
+                      00096 ;lcd_data_addr - адрес ячейки начиная с которой располагается буфер считанных с весов данных 
+                      00097 ;16 байт начиная с адреса записанного в аккумулятор
+0044                  00098 Data_to_LCD
+0044   ???? ????      00099         banksel buf_temp
+0046   00??           00100         movwf buf_temp ;адрес начала области вывода     
+0047   2???           00101         call WRITE ;команда драйвера дисплея (запись данных) 101
+0048   ???? ????      00102         banksel counter 
+004A   3006           00103         movlw .6 ;подаем начальный адрес 000000
+004B   00??           00104         movwf counter
+004C                  00105 send_zero_4
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+004C   2???           00106         call SET_ZERO ;подача логического нуля на драйвер дисплея
+004D   ???? ????      00107         banksel counter 
+004F   0B??           00108         decfsz counter,1
+0050   2???           00109         goto send_zero_4
+                      00110         ;выводим данные 32*4 бит
+0051   08??           00111         movf buf_temp,0
+0052   0084           00112         movwf FSR
+0053                  00113 send_next_byte  
+0053   3008           00114         movlw .8
+0054   00??           00115         movwf counter
+0055   0800           00116         movf INDF,0
+0056   00??           00117         movwf temp
+0057                  00118 send_next_bit
+0057   1F80           00119         btfss temp,7
+0058   2???           00120         goto send_zero
+0059   2???           00121         call SET_ONE ;подача логической единицы на драйвер дисплея
+005A                  00122 shift_bit
+005A   ???? ????      00123         banksel temp    
+005C   0D??           00124         rlf temp,1
+005D   0B??           00125         decfsz counter,1
+005E   2???           00126         goto send_next_bit
+005F   0A84           00127         incf FSR,1
+0060   08??           00128         movf buf_temp,0 ;!!
+0061   3E10           00129         addlw 0x10      ;!!
+0062   0604           00130         xorwf FSR, 0 ;!!
+0063   1D03           00131         btfss STATUS,Z ;если адрес уже 0х70 - заканчиваем отправку данных
+0064   2???           00132         goto send_next_byte     
+                      00133         SET_BANK0
+0065   1283               M         bcf STATUS, RP0
+0066   1303               M         bcf STATUS, RP1 
+0067   1606           00134         bsf CS ;CS=1
+0068   ???? ???? 2??? 00135         lcall pause_3us ;пауза 3 мкс
+006B   ???? ????      00136         pagesel $
+006D   0008           00137         return
+006E                  00138 send_zero
+006E   2???           00139         call SET_ZERO ;подача логического нуля на драйвер дисплея       
+006F   2???           00140         goto shift_bit
+                      00141 ;--------------------------------------------------------------------------
+                      00142 ;- Вывести символ в указанной позиции
+                      00143 ;PrintSimb(SimbCode, Simb_Pos)
+                      00144 ;SimbCode - ASCII код выводимого символа при вызове загружен в аккумулятор
+                      00145 ;Simb_Pos – позиция в которой выводить символ (от 1 до 16: 1-5 первая строка, 6-10 вторая строка, 11-16 
+                            третья строка)
+0070                  00146 PrintSimb
+0070   ???? ???? 2??? 00147         lcall ASCII_to_LCDcode ;w=LCDcode(ASCIIcode)
+0073   ???? ????      00148         pagesel $
+0075   00??           00149         movwf buf_temp
+0076   0804           00150         movf FSR,0 ;сохраняем FSR
+0077   00??           00151         movwf simb_temp
+                      00152 
+0078   08??           00153         movf simb_pos,0
+0079   3C10           00154         sublw .16 ;w=16-simb_pos
+007A   3E??           00155         addlw Display_Data ;w=Display_Data+16-simb_pos
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+007B   0084           00156         movwf FSR
+007C   08??           00157         movf buf_temp,0
+007D   0080           00158         movwf INDF
+                      00159 
+007E   08??           00160         movf simb_temp,0
+007F   0084           00161         movwf FSR ;восстанавливаем FSR
+                      00162         
+0080   30??           00163         movlw Display_Data
+0081   2???           00164         call Data_to_LCD
+0082   0008           00165         return
+                      00166 ;-----------------------------------------------------------------------
+                      00167 ;- Преобразовать ASCII буфер (16 символов+2 байта с позициями запятых) в код для вывод на дисплей
+                      00168 ;Convert_ASCII_to_LCD(lcd_data_addr, ASCII_data)
+                      00169 ;lcd_data_addr - адрес ячейки начиная с которой располагается буфер для вывода на дисплей
+                      00170 ;ASCII_data – данные в виде ASCII кода (поочередно – сначала 1я строка 5 символов, потом 2я строка 5 сим
+                            волов, потом 3я строка 6 символов)
+                      00171 ;буфер ASCII кода подается в аккумуляторе
+                      00172 ;буфер дисплея 16 байт начиная с Display_Data
+0083                  00173 Convert_ASCII_to_LCD
+                      00174         ;ячейки буфера дисплея расположены противоположно ячекам разрядов в ASCII коде
+0083   ???? ????      00175         banksel buf_temp
+0085   00??           00176         movwf buf_temp
+0086   0804           00177         movf FSR,0 ;сохраняем FSR
+0087   00??           00178         movwf simb_temp
+0088   3010           00179         movlw .16
+0089   00??           00180         movwf counter
+008A                  00181 nextASCII
+008A   08??           00182         movf buf_temp,0
+008B   0084           00183         movwf FSR
+008C   0800           00184         movf INDF,0 ;W=ASCII[i]
+008D   ???? ???? 2??? 00185         lcall ASCII_to_LCDcode ;w=LCDcode[i]
+0090   ???? ????      00186         pagesel $
+0092   00??           00187         movwf temp
+0093   03??           00188         decf counter,0 ;W=counter-1
+0094   3E??           00189         addlw Display_Data ;W=[Display_Data]+counter-1 т.е. адрес ячейки буфера в кот. надо писать
+0095   0084           00190         movwf FSR
+0096   08??           00191         movf temp,0
+0097   0080           00192         movwf INDF ;Display_Data[j]=LCDcode[i]
+0098   0A??           00193         incf buf_temp,1
+0099   0B??           00194         decfsz counter,1
+009A   2???           00195         goto nextASCII
+                      00196 
+                      00197 ;       movf buf_temp,0
+                      00198 ;       addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+                      00199 ;       call koma_set ;расставляем запятые
+                      00200         
+009B   08??           00201         movf simb_temp,0
+009C   0084           00202         movwf FSR ;восстанавливаем FSR
+009D   0008           00203         return
+                      00204 ;-----------------------------------------------------------------------
+                      00205 ;установка запятых в зависимости от состояния переменной записанной
+                      00206 ;в двух байтах начиная с адреса указанного в аккумуляторе
+                      00207 ;koma_set
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00208 ;       banksel temp
+                      00209 ;       movwf FSR
+                      00210 ;       movf INDF,0
+                      00211 ;       movwf temp
+                      00212 ;       incf FSR,1
+                      00213 ;       movf INDF,0
+                      00214 ;       movwf temp2     
+                      00215 
+                      00216 ;       movlw Display_Data 
+                      00217 ;       movwf FSR
+                      00218 ;       movlw .16
+                      00219 ;       movwf counter
+                      00220 ;next_koma
+                      00221 ;       bcf INDF, 7
+                      00222 ;       incf FSR,1
+                      00223 ;       decfsz counter,1
+                      00224 ;       goto next_koma  
+                      00225 
+                      00226 ;koma_set1
+                      00227         ;точка у нас 7й бит кода символа поэтому проверяем koma и ставим ее если нужно
+                      00228 ;       btfsc temp,7
+                      00229 ;       bsf Display_Data+.15,7
+                      00230 ;       btfsc temp,6
+                      00231 ;       bsf Display_Data+.14,7
+                      00232 ;       btfsc temp,5
+                      00233 ;       bsf Display_Data+.13,7
+                      00234 ;       btfsc temp,4
+                      00235 ;       bsf Display_Data+.12,7
+                      00236 ;       btfsc temp,3
+                      00237 ;       bsf Display_Data+.11,7
+                      00238 ;koma_set2
+                      00239 ;       btfsc temp,2
+                      00240 ;       bsf Display_Data+.10,7
+                      00241 ;       btfsc temp,1
+                      00242 ;       bsf Display_Data+.9,7
+                      00243 ;       btfsc temp,0
+                      00244 ;       bsf Display_Data+.8,7
+                      00245 ;       btfsc temp2,7
+                      00246 ;       bsf Display_Data+.7,7
+                      00247 ;       btfsc temp2,6
+                      00248 ;       bsf Display_Data+.6,7
+                      00249 ;koma_set3
+                      00250 ;       btfsc temp2,5
+                      00251 ;       bsf Display_Data+.5,7
+                      00252 ;       btfsc temp2,4
+                      00253 ;       bsf Display_Data+.4,7
+                      00254 ;       btfsc temp2,3
+                      00255 ;       bsf Display_Data+.3,7
+                      00256 ;       btfsc temp2,2
+                      00257 ;       bsf Display_Data+.2,7
+                      00258 ;       btfsc temp2,1
+                      00259 ;       bsf Display_Data+.1,7
+                      00260 ;       btfsc temp2,0
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00261 ;       bsf Display_Data,7
+                      00262 ;       return
+                      00263 ;-----------------------------------------------------------------------
+                      00264 ;- Установить запятую
+                      00265 ;SetKoma(komaPos)
+                      00266 ;KomaPos – разряд перед которым надо поставить запятую
+                      00267 ;в аккумуляторе адрес области из двух байт с позициями запятых
+                      00268 ;SetKoma
+                      00269 ;       banksel buf_temp
+                      00270 ;       movwf buf_temp
+                      00271 ;       movf FSR,0 ;сохраняем FSR
+                      00272 ;       movwf simb_temp
+                      00273 ;       movf buf_temp,0
+                      00274 ;       movwf FSR
+                      00275 ;       banksel KomaPos
+                      00276 ;       movf KomaPos,0
+                      00277 ;       xorlw .1
+                      00278 ;       btfsc STATUS,Z
+                      00279 ;       bsf INDF,7
+                      00280 ;       movf KomaPos,0
+                      00281 ;       xorlw .2
+                      00282 ;       btfsc STATUS,Z
+                      00283 ;       bsf INDF,6
+                      00284 ;       movf KomaPos,0
+                      00285 ;       xorlw .3
+                      00286 ;       btfsc STATUS,Z
+                      00287 ;       bsf INDF,5
+                      00288 ;       movf KomaPos,0
+                      00289 ;       xorlw .4
+                      00290 ;       btfsc STATUS,Z
+                      00291 ;       bsf INDF,4
+                      00292 ;       movf KomaPos,0
+                      00293 ;       xorlw .5
+                      00294 ;       btfsc STATUS,Z
+                      00295 ;       bsf INDF,3
+                      00296 ;       movf KomaPos,0
+                      00297 ;       xorlw .6
+                      00298 ;       btfsc STATUS,Z
+                      00299 ;       bsf INDF,2
+                      00300 ;       movf KomaPos,0
+                      00301 ;       xorlw .7
+                      00302 ;       btfsc STATUS,Z
+                      00303 ;       bsf INDF,1
+                      00304 ;       movf KomaPos,0
+                      00305 ;       xorlw .8
+                      00306 ;       btfsc STATUS,Z
+                      00307 ;       bsf INDF,0
+                      00308 ;       incf FSR,1
+                      00309 ;       movf KomaPos,0
+                      00310 ;       xorlw .9
+                      00311 ;       btfsc STATUS,Z
+                      00312 ;       bsf INDF,7
+                      00313 ;       movf KomaPos,0
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00314 ;       xorlw .10
+                      00315 ;       btfsc STATUS,Z
+                      00316 ;       bsf INDF,6
+                      00317 ;       movf KomaPos,0
+                      00318 ;       xorlw .11
+                      00319 ;       btfsc STATUS,Z
+                      00320 ;       bsf INDF,5
+                      00321 ;       movf KomaPos,0
+                      00322 ;       xorlw .12
+                      00323 ;       btfsc STATUS,Z
+                      00324 ;       bsf INDF,4
+                      00325 ;       movf KomaPos,0
+                      00326 ;       xorlw .13
+                      00327 ;       btfsc STATUS,Z
+                      00328 ;       bsf INDF,3
+                      00329 ;       movf KomaPos,0
+                      00330 ;       xorlw .14
+                      00331 ;       btfsc STATUS,Z
+                      00332 ;       bsf INDF,2
+                      00333 ;       movf KomaPos,0
+                      00334 ;       xorlw .15
+                      00335 ;       btfsc STATUS,Z
+                      00336 ;       bsf INDF,1
+                      00337 ;       movf KomaPos,0
+                      00338 ;       xorlw .16
+                      00339 ;       btfsc STATUS,Z
+                      00340 ;       bsf INDF,0
+                      00341 ;       movf simb_temp,0
+                      00342 ;       movwf FSR ;восстанавливаем FSR
+                      00343 ;       return
+                      00344 ;-----------------------------------------------------------------------
+                      00345 ;- Убрать запятую
+                      00346 ;ClrKoma(komaPos)
+                      00347 ;KomaPos – разряд перед которым надо убрать запятую
+                      00348 ;в аккумуляторе адрес области из двух байт с позициями запятых
+                      00349 ;ClrKoma
+                      00350 ;       banksel buf_temp
+                      00351 ;       movwf buf_temp
+                      00352 ;       movf FSR,0 ;сохраняем FSR
+                      00353 ;       movwf simb_temp
+                      00354 ;       movf buf_temp,0
+                      00355 ;       movwf FSR
+                      00356 ;       banksel KomaPos
+                      00357 ;       movf KomaPos,0
+                      00358 ;       xorlw .1
+                      00359 ;       btfsc STATUS,Z
+                      00360 ;       bcf INDF,7
+                      00361 ;       movf KomaPos,0
+                      00362 ;       xorlw .2
+                      00363 ;       btfsc STATUS,Z
+                      00364 ;       bcf INDF,6
+                      00365 ;       movf KomaPos,0
+                      00366 ;       xorlw .3
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00367 ;       btfsc STATUS,Z
+                      00368 ;       bcf INDF,5
+                      00369 ;       movf KomaPos,0
+                      00370 ;       xorlw .4
+                      00371 ;       btfsc STATUS,Z
+                      00372 ;       bcf INDF,4
+                      00373 ;       movf KomaPos,0
+                      00374 ;       xorlw .5
+                      00375 ;       btfsc STATUS,Z
+                      00376 ;       bcf INDF,3
+                      00377 ;       movf KomaPos,0
+                      00378 ;       xorlw .6
+                      00379 ;       btfsc STATUS,Z
+                      00380 ;       bcf INDF,2
+                      00381 ;       movf KomaPos,0
+                      00382 ;       xorlw .7
+                      00383 ;       btfsc STATUS,Z
+                      00384 ;       bcf INDF,1
+                      00385 ;       movf KomaPos,0
+                      00386 ;       xorlw .8
+                      00387 ;       btfsc STATUS,Z
+                      00388 ;       bcf INDF,0
+                      00389 ;       incf FSR,1
+                      00390 ;       movf KomaPos,0
+                      00391 ;       xorlw .9
+                      00392 ;       btfsc STATUS,Z
+                      00393 ;       bcf INDF,7
+                      00394 ;       movf KomaPos,0
+                      00395 ;       xorlw .10
+                      00396 ;       btfsc STATUS,Z
+                      00397 ;       bcf INDF,6
+                      00398 ;       movf KomaPos,0
+                      00399 ;       xorlw .11
+                      00400 ;       btfsc STATUS,Z
+                      00401 ;       bcf INDF,5
+                      00402 ;       movf KomaPos,0
+                      00403 ;       xorlw .12
+                      00404 ;       btfsc STATUS,Z
+                      00405 ;       bcf INDF,4
+                      00406 ;       movf KomaPos,0
+                      00407 ;       xorlw .13
+                      00408 ;       btfsc STATUS,Z
+                      00409 ;       bcf INDF,3
+                      00410 ;       movf KomaPos,0
+                      00411 ;       xorlw .14
+                      00412 ;       btfsc STATUS,Z
+                      00413 ;       bcf INDF,2
+                      00414 ;       movf KomaPos,0
+                      00415 ;       xorlw .15
+                      00416 ;       btfsc STATUS,Z
+                      00417 ;       bcf INDF,1
+                      00418 ;       movf KomaPos,0
+                      00419 ;       xorlw .16
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00420 ;       btfsc STATUS,Z
+                      00421 ;       bcf INDF,0
+                      00422 ;       movf simb_temp,0
+                      00423 ;       movwf FSR ;восстанавливаем FSR
+                      00424 ;       return
+                      00425 ;-----------------------------------------------------------------------
+                      00426 ;- Вывести сообщение в первой строке
+                      00427 ;PrintFirstStr(MsgAddr)
+                      00428 ;MsgAddr – адрес начала области памяти где хранятся 5 символов в ASCII коде для вывода в первую строку
+                      00429 ;- Вывести сообщение во второй строке
+                      00430 ;адрес начала области 5 байт указываем в аккумуляторе
+                      00431 ;буфер дисплея 16 байт начиная с Display_Data
+009E                  00432 PrintFirstStr
+                      00433 ;по сути тоже самое что и для всего дисплея 
+                      00434 ;только для ускорения преобразовываем только ASCII коды первой строки
+009E   ???? ????      00435         banksel buf_temp
+00A0   00??           00436         movwf buf_temp
+00A1   0804           00437         movf FSR,0 ;сохраняем FSR
+00A2   00??           00438         movwf simb_temp
+                      00439 
+00A3   3005           00440         movlw .5
+00A4   00??           00441         movwf counter
+00A5                  00442 nextASCII_1
+00A5   08??           00443         movf buf_temp,0
+00A6   0084           00444         movwf FSR
+00A7   0800           00445         movf INDF,0 ;W=ASCII[i]
+00A8   ???? ???? 2??? 00446         lcall ASCII_to_LCDcode ;w=LCDcode[i]
+00AB   ???? ????      00447         pagesel $
+00AD   00??           00448         movwf temp
+00AE   300A           00449         movlw .10
+00AF   07??           00450         addwf counter,0 ;W=counter+10
+00B0   3E??           00451         addlw Display_Data ;W=[Display_Data]+counter+10 т.е. адрес ячейки буфера в кот. надо писать
+00B1   0084           00452         movwf FSR
+00B2   08??           00453         movf temp,0
+00B3   0080           00454         movwf INDF ;Display_Data[j]=LCDcode[i]
+00B4   0A??           00455         incf buf_temp,1
+00B5   0B??           00456         decfsz counter,1
+00B6   2???           00457         goto nextASCII_1
+                      00458 
+                      00459 ;       movf buf_temp,0
+                      00460 ;       addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+                      00461 ;       call koma_set ;расставляем запятые
+                      00462 
+00B7   08??           00463         movf simb_temp,0
+00B8   0084           00464         movwf FSR ;восстанавливаем FSR
+                      00465         
+00B9   30??           00466         movlw Display_Data
+00BA   2???           00467         call Data_to_LCD
+00BB   0008           00468         return
+                      00469 ;-----------------------------------------------------------------------
+                      00470 ;- Вывести сообщение в 2ой строке
+                      00471 ;PrintSecondStr(MsgAddr)
+                      00472 ;MsgAddr – адрес начала области памяти где хранятся 5 символов в ASCII коде для вывода в первую строку
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00473 ;- Вывести сообщение во второй строке
+                      00474 ;адрес начала области 5 байт указываем в аккумуляторе
+                      00475 ;буфер дисплея 16 байт начиная с Display_Data
+00BC                  00476 PrintSecondStr
+                      00477 ;по сути тоже самое что и для всего дисплея 
+                      00478 ;только для ускорения преобразовываем только ASCII коды 2ой строки
+00BC   ???? ????      00479         banksel buf_temp
+00BE   00??           00480         movwf buf_temp
+00BF   0804           00481         movf FSR,0 ;сохраняем FSR
+00C0   00??           00482         movwf simb_temp
+                      00483 
+00C1   3005           00484         movlw .5
+00C2   00??           00485         movwf counter
+00C3                  00486 nextASCII_2
+00C3   08??           00487         movf buf_temp,0
+00C4   0084           00488         movwf FSR
+00C5   0800           00489         movf INDF,0 ;W=ASCII[i]
+00C6   ???? ???? 2??? 00490         lcall ASCII_to_LCDcode ;w=LCDcode[i]
+00C9   ???? ????      00491         pagesel $
+00CB   00??           00492         movwf temp
+00CC   3005           00493         movlw .5
+00CD   07??           00494         addwf counter,0 ;W=counter+5
+00CE   3E??           00495         addlw Display_Data ;W=[Display_Data]+counter+5 т.е. адрес ячейки буфера в кот. надо писать
+00CF   0084           00496         movwf FSR
+00D0   08??           00497         movf temp,0
+00D1   0080           00498         movwf INDF ;Display_Data[j]=LCDcode[i]
+00D2   0A??           00499         incf buf_temp,1
+00D3   0B??           00500         decfsz counter,1
+00D4   2???           00501         goto nextASCII_2
+                      00502 
+                      00503 ;       movf buf_temp,0
+                      00504 ;       addlw .11 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+                      00505 ;       call koma_set ;расставляем запятые
+                      00506 
+00D5   08??           00507         movf simb_temp,0
+00D6   0084           00508         movwf FSR ;восстанавливаем FSR
+                      00509         
+00D7   30??           00510         movlw Display_Data
+00D8   2???           00511         call Data_to_LCD
+00D9   0008           00512         return
+                      00513 ;-----------------------------------------------------------------------
+                      00514 ;- Вывести сообщение в 3й строке
+                      00515 ;PrintThirdStr(MsgAddr)
+                      00516 ;MsgAddr – адрес начала области памяти где хранятся 6 символов в ASCII коде для вывода в первую строку
+                      00517 ;- Вывести сообщение во второй строке
+                      00518 ;адрес начала области 6 байт указываем в аккумуляторе
+                      00519 ;буфер дисплея 16 байт начиная с Display_Data
+00DA                  00520 PrintThirdStr
+                      00521 ;по сути тоже самое что и для всего дисплея 
+                      00522 ;только для ускорения преобразовываем только ASCII коды 3й строки
+00DA   ???? ????      00523         banksel buf_temp
+00DC   00??           00524         movwf buf_temp
+00DD   0804           00525         movf FSR,0 ;сохраняем FSR
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00DE   00??           00526         movwf simb_temp
+                      00527 
+00DF   3006           00528         movlw .6
+00E0   00??           00529         movwf counter
+00E1                  00530 nextASCII_3
+00E1   08??           00531         movf buf_temp,0
+00E2   0084           00532         movwf FSR
+00E3   0800           00533         movf INDF,0 ;W=ASCII[i]
+00E4   ???? ???? 2??? 00534         lcall ASCII_to_LCDcode ;w=LCDcode[i]
+00E7   ???? ????      00535         pagesel $
+00E9   00??           00536         movwf temp
+00EA   03??           00537         decf counter,0 ;W=counter-1
+00EB   3E??           00538         addlw Display_Data ;W=[Display_Data]+counter-1 т.е. адрес ячейки буфера в кот. надо писать
+00EC   0084           00539         movwf FSR
+00ED   08??           00540         movf temp,0
+00EE   0080           00541         movwf INDF ;Display_Data[j]=LCDcode[i]
+00EF   0A??           00542         incf buf_temp,1
+00F0   0B??           00543         decfsz counter,1
+00F1   2???           00544         goto nextASCII_3
+                      00545 
+                      00546 ;       movf buf_temp,0
+                      00547 ;       addlw .6 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+                      00548 ;       call koma_set ;расставляем запятые
+                      00549 
+00F2   08??           00550         movf simb_temp,0
+00F3   0084           00551         movwf FSR ;восстанавливаем FSR
+                      00552         
+00F4   30??           00553         movlw Display_Data
+00F5   2???           00554         call Data_to_LCD
+00F6   0008           00555         return
+                      00556 ;-----------------------------------------------------------------------
+                      00557 ;- Вывести сообщение во все строки (16 символов)
+                      00558 ;PrintMsg(MsgAddr)
+                      00559 ;MsgAddr – адрес начала области памяти где хранятся 16 символов в ASCII коде для вывода на дисплей
+                      00560 ;и 2 байта с позициями запятых
+                      00561 ;адрес начала области 18 байт указываем в аккумуляторе
+                      00562 ;буфер дисплея 16 байт начиная с Display_Data
+00F7                  00563 PrintMsg
+00F7   2???           00564         call Convert_ASCII_to_LCD
+00F8   30??           00565         movlw Display_Data
+00F9   2???           00566         call Data_to_LCD        
+00FA   0008           00567         return
+                      00568 ;-----------------------------------------------------------------------
+00FB                  00569 SET_ZERO ;подача логического нуля на драйвер дисплея
+                      00570         SET_BANK0
+00FB   1283               M         bcf STATUS, RP0
+00FC   1303               M         bcf STATUS, RP1 
+00FD   1386           00571         bcf DATA_PIN ;DATA=0
+00FE   0000           00572         nop
+00FF   1686           00573         bsf WR ;WR=1
+0100   ???? ???? 2??? 00574         lcall pause_5us ;пауза 3 мкс
+0103   ???? ????      00575         pagesel $
+                      00576         SET_BANK0
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0105   1283               M         bcf STATUS, RP0
+0106   1303               M         bcf STATUS, RP1 
+0107   1286           00577         bcf WR ;WR=0
+0108   1386           00578         bcf DATA_PIN ;DATA=0
+0109   ???? ???? 2??? 00579         lcall pause_5us ;пауза 3 мкс
+010C   ???? ????      00580         pagesel $
+010E   0008           00581         return
+                      00582 ;--------------------------------------------------------------------------
+010F                  00583 SET_ONE ;подача логической единицы на драйвер дисплея
+                      00584         SET_BANK0
+010F   1283               M         bcf STATUS, RP0
+0110   1303               M         bcf STATUS, RP1 
+0111   1786           00585         bsf DATA_PIN ;DATA=1
+0112   0000           00586         nop
+0113   1686           00587         bsf WR ;WR=1
+0114   ???? ???? 2??? 00588         lcall pause_5us ;пауза 3 мкс
+0117   ???? ????      00589         pagesel $
+                      00590         SET_BANK0
+0119   1283               M         bcf STATUS, RP0
+011A   1303               M         bcf STATUS, RP1 
+011B   1286           00591         bcf WR ;WR=0
+011C   1386           00592         bcf DATA_PIN ;DATA=0
+011D   ???? ???? 2??? 00593         lcall pause_5us ;пауза 3 мкс
+0120   ???? ????      00594         pagesel $
+0122   0008           00595         return
+                      00596 ;--------------------------------------------------------------------------
+0123                  00597 WRITE ;команда драйвера дисплея (запись данных) 101
+                      00598         SET_BANK0
+0123   1283               M         bcf STATUS, RP0
+0124   1303               M         bcf STATUS, RP1 
+0125   1206           00599         bcf CS ;CS=0
+0126   ???? ???? 2??? 00600         lcall pause_5us ;пауза 3 мкс
+0129   ???? ????      00601         pagesel $
+012B   2???           00602         call SET_ONE ;подача логической единицы на драйвер дисплея
+012C   2???           00603         call SET_ZERO ;подача логического нуля на драйвер дисплея
+012D   2???           00604         call SET_ONE ;подача логической единицы на драйвер дисплея
+012E   0008           00605         return
+                      00606 ;--------------------------------------------------------------------------
+012F                  00607 COMMAND;команда драйвера дисплея (команда кправления) 100
+012F   1206           00608         bcf CS ;CS=0
+0130   2???           00609         call pause_5us ;пауза 3 мкс
+0131   2???           00610         call SET_ONE ;подача логической единицы на драйвер дисплея
+0132   2???           00611         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0133   2???           00612         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0134   0008           00613         return
+                      00614 ;--------------------------------------------------------------------------
+0135                  00615 TONE4K ;команда TONE4K согласно документации на драйвер 100 010000000
+0135   2???           00616         call COMMAND;команда драйвера дисплея (команда управления) 100
+0136   2???           00617         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0137   2???           00618         call SET_ONE ;подача логической единицы на драйвер дисплея
+0138   2???           00619         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0139   2???           00620         call SET_ZERO ;подача логического нуля на драйвер дисплея
+013A   2???           00621         call SET_ZERO ;подача логического нуля на драйвер дисплея
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+013B   2???           00622         call SET_ZERO ;подача логического нуля на драйвер дисплея
+013C   2???           00623         call SET_ZERO ;подача логического нуля на драйвер дисплея
+013D   2???           00624         call SET_ZERO ;подача логического нуля на драйвер дисплея
+013E   2???           00625         call SET_ZERO ;подача логического нуля на драйвер дисплея
+013F   1606           00626         bsf CS ;CS=1
+0140   2???           00627         call pause_5us ;пауза 3 мкс
+0141   0008           00628         return
+                      00629 ;--------------------------------------------------------------------------
+0142                  00630 TNORMAL ;команда TNORMAL согласно документации на драйвер 100 111000111
+0142   2???           00631         call COMMAND;команда драйвера дисплея (команда управления) 100
+0143   2???           00632         call SET_ONE ;подача логической единицы на драйвер дисплея
+0144   2???           00633         call SET_ONE ;подача логической единицы на драйвер дисплея
+0145   2???           00634         call SET_ONE ;подача логической единицы на драйвер дисплея
+0146   2???           00635         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0147   2???           00636         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0148   2???           00637         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0149   2???           00638         call SET_ONE ;подача логической единицы на драйвер дисплея
+014A   2???           00639         call SET_ONE ;подача логической единицы на драйвер дисплея
+014B   2???           00640         call SET_ONE ;подача логической единицы на драйвер дисплея
+014C   1606           00641         bsf CS ;CS=1
+014D   2???           00642         call pause_5us ;пауза 3 мкс
+014E   0008           00643         return
+                      00644 ;--------------------------------------------------------------------------
+014F                  00645 SYS_EN ;команда SYS EN согласно документации на драйвер 100 000000011
+014F   2???           00646         call COMMAND;команда драйвера дисплея (команда управления) 100
+0150   ???? ????      00647         banksel counter
+0152   3007           00648         movlw .7
+0153   00??           00649         movwf counter
+0154                  00650 send_zero_1
+0154   2???           00651         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0155   ???? ????      00652         banksel counter
+0157   0B??           00653         decfsz counter,1
+0158   2???           00654         goto send_zero_1        
+0159   2???           00655         call SET_ONE ;подача логической единицы на драйвер дисплея
+015A   2???           00656         call SET_ONE ;подача логической единицы на драйвер дисплея
+                      00657         SET_BANK0
+015B   1283               M         bcf STATUS, RP0
+015C   1303               M         bcf STATUS, RP1 
+015D   1606           00658         bsf CS ;CS=1
+015E   ???? ???? 2??? 00659         lcall pause_5us ;пауза 3 мкс
+0161   ???? ????      00660         pagesel $       
+0163   0008           00661         return
+                      00662 ;--------------------------------------------------------------------------
+0164                  00663 RC_256K ;команда RC_256K согласно документации на драйвер 100 000110000
+0164   2???           00664         call COMMAND;команда драйвера дисплея (команда управления) 100
+0165   2???           00665         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0166   2???           00666         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0167   2???           00667         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0168   2???           00668         call SET_ONE ;подача логической единицы на драйвер дисплея
+0169   2???           00669         call SET_ONE ;подача логической единицы на драйвер дисплея
+016A   2???           00670         call SET_ZERO ;подача логического нуля на драйвер дисплея
+016B   2???           00671         call SET_ZERO ;подача логического нуля на драйвер дисплея
+016C   2???           00672         call SET_ZERO ;подача логического нуля на драйвер дисплея
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+016D   2???           00673         call SET_ZERO ;подача логического нуля на драйвер дисплея
+                      00674         SET_BANK0
+016E   1283               M         bcf STATUS, RP0
+016F   1303               M         bcf STATUS, RP1 
+0170   1606           00675         bsf CS ;CS=1
+0171   ???? ???? 2??? 00676         lcall pause_5us ;пауза 3 мкс
+0174   ???? ????      00677         pagesel $
+0176   0008           00678         return
+                      00679 ;--------------------------------------------------------------------------
+0177                  00680 BIAS_1_3 ;команда BIAS ab=10:4 LCD 1/3 согласно документации на драйвер 100 001010011
+0177   2???           00681         call COMMAND;команда драйвера дисплея (команда управления) 100
+0178   2???           00682         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0179   2???           00683         call SET_ZERO ;подача логического нуля на драйвер дисплея
+017A   2???           00684         call SET_ONE ;подача логической единицы на драйвер дисплея
+017B   2???           00685         call SET_ZERO ;подача логического нуля на драйвер дисплея
+017C   2???           00686         call SET_ONE ;подача логической единицы на драйвер дисплея
+017D   2???           00687         call SET_ZERO ;подача логического нуля на драйвер дисплея
+017E   2???           00688         call SET_ZERO ;подача логического нуля на драйвер дисплея
+017F   2???           00689         call SET_ONE ;подача логической единицы на драйвер дисплея
+0180   2???           00690         call SET_ONE ;подача логической единицы на драйвер дисплея
+                      00691         SET_BANK0
+0181   1283               M         bcf STATUS, RP0
+0182   1303               M         bcf STATUS, RP1 
+0183   1606           00692         bsf CS ;CS=1
+0184   ???? ???? 2??? 00693         lcall pause_5us ;пауза 3 мкс
+0187   ???? ????      00694         pagesel $       
+0189   0008           00695         return
+                      00696 ;--------------------------------------------------------------------------
+018A                  00697 LCD_OFF ;команда LCD OFF согласно документации на драйвер 100 000000100
+018A   2???           00698         call COMMAND;команда драйвера дисплея (команда управления) 100
+018B   ???? ????      00699         banksel counter
+018D   3006           00700         movlw .6
+018E   00??           00701         movwf counter
+018F                  00702 send_zero_2
+018F   2???           00703         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0190   ???? ????      00704         banksel counter
+0192   0B??           00705         decfsz counter,1
+0193   2???           00706         goto send_zero_2        
+0194   2???           00707         call SET_ONE ;подача логической единицы на драйвер дисплея
+0195   2???           00708         call SET_ZERO ;подача логического нуля на драйвер дисплея
+0196   2???           00709         call SET_ZERO ;подача логического нуля на драйвер дисплея
+                      00710         SET_BANK0
+0197   1283               M         bcf STATUS, RP0
+0198   1303               M         bcf STATUS, RP1 
+0199   1606           00711         bsf CS ;CS=1
+019A   ???? ???? 2??? 00712         lcall pause_5us ;пауза 3 мкс
+019D   ???? ????      00713         pagesel $       
+019F   0008           00714         return
+                      00715 ;--------------------------------------------------------------------------
+01A0                  00716 LCD_ON ;команда LCD ON согласно документации на драйвер 100 000000111
+01A0   2???           00717         call COMMAND;команда драйвера дисплея (команда управления) 100
+01A1   ???? ????      00718         banksel counter
+01A3   3006           00719         movlw .6
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01A4   00??           00720         movwf counter
+01A5                  00721 send_zero_3
+01A5   2???           00722         call SET_ZERO ;подача логического нуля на драйвер дисплея
+01A6   ???? ????      00723         banksel counter
+01A8   0B??           00724         decfsz counter,1
+01A9   2???           00725         goto send_zero_3        
+01AA   2???           00726         call SET_ONE ;подача логической единицы на драйвер дисплея
+01AB   2???           00727         call SET_ONE ;подача логической единицы на драйвер дисплея
+01AC   2???           00728         call SET_ONE ;подача логической единицы на драйвер дисплея
+                      00729         SET_BANK0
+01AD   1283               M         bcf STATUS, RP0
+01AE   1303               M         bcf STATUS, RP1 
+01AF   1606           00730         bsf CS ;CS=1
+01B0   ???? ???? 2??? 00731         lcall pause_5us ;пауза 3 мкс
+01B3   ???? ????      00732         pagesel $       
+01B5   0008           00733         return
+                      00734 ;-----------------------------------------------------------------------------
+                      00735 ;- Преобразовать символ в коде ASCII в код дисплея
+                      00736 ;ASCII_to_LCDcode(ASCIIcode):LCDcode
+                      00737 ;ASCIIcode - символ в коде ASCII
+                      00738 ;LCDcode - символ в коде дисплея
+                      00739 ;входные данные ASCIIcode подается в аккумулятора 
+                      00740 ;и выходные данные LCDcode выдаются в аккумуляторе
+01B6                  00741 ASCII_to_LCDcode
+                      00742 ;поочередно сравниваем символы
+01B6   ???? ????      00743         banksel temp
+01B8   00??           00744         movwf temp
+01B9   3A30           00745         xorlw '0'
+01BA   1903           00746         btfsc STATUS,Z
+01BB   347D           00747         retlw simb0
+                      00748 
+01BC   08??           00749         movf temp,0
+01BD   3A31           00750         xorlw '1'
+01BE   1903           00751         btfsc STATUS,Z  
+01BF   3460           00752         retlw simb1             
+                      00753 
+01C0   08??           00754         movf temp,0
+01C1   3A32           00755         xorlw '2'
+01C2   1903           00756         btfsc STATUS,Z  
+01C3   343E           00757         retlw simb2
+                      00758         
+01C4   08??           00759         movf temp,0
+01C5   3A33           00760         xorlw '3'
+01C6   1903           00761         btfsc STATUS,Z  
+01C7   347A           00762         retlw simb3
+                      00763 
+01C8   08??           00764         movf temp,0
+01C9   3A34           00765         xorlw '4'
+01CA   1903           00766         btfsc STATUS,Z  
+01CB   3463           00767         retlw simb4     
+                      00768 
+01CC   08??           00769         movf temp,0
+01CD   3A35           00770         xorlw '5'
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01CE   1903           00771         btfsc STATUS,Z  
+01CF   345B           00772         retlw simb5             
+                      00773 
+01D0   08??           00774         movf temp,0
+01D1   3A36           00775         xorlw '6'
+01D2   1903           00776         btfsc STATUS,Z  
+01D3   345F           00777         retlw simb6     
+                      00778 
+01D4   08??           00779         movf temp,0
+01D5   3A37           00780         xorlw '7'
+01D6   1903           00781         btfsc STATUS,Z  
+01D7   3470           00782         retlw simb7     
+                      00783 
+01D8   08??           00784         movf temp,0
+01D9   3A38           00785         xorlw '8'
+01DA   1903           00786         btfsc STATUS,Z  
+01DB   347F           00787         retlw simb8     
+                      00788 
+01DC   08??           00789         movf temp,0
+01DD   3A39           00790         xorlw '9'
+01DE   1903           00791         btfsc STATUS,Z  
+01DF   347B           00792         retlw simb9
+                      00793 
+01E0   08??           00794         movf temp,0
+01E1   3A41           00795         xorlw 'A'
+01E2   1903           00796         btfsc STATUS,Z  
+01E3   3477           00797         retlw simbA     
+                      00798 
+01E4   08??           00799         movf temp,0
+01E5   3A62           00800         xorlw 'b'
+01E6   1903           00801         btfsc STATUS,Z  
+01E7   344F           00802         retlw simbb     
+                      00803 
+01E8   08??           00804         movf temp,0
+01E9   3A43           00805         xorlw 'C'
+01EA   1903           00806         btfsc STATUS,Z  
+01EB   341D           00807         retlw simbC
+                      00808 
+01EC   08??           00809         movf temp,0
+01ED   3A64           00810         xorlw 'd'
+01EE   1903           00811         btfsc STATUS,Z  
+01EF   346E           00812         retlw simbd
+                      00813 
+01F0   08??           00814         movf temp,0
+01F1   3A45           00815         xorlw 'E'
+01F2   1903           00816         btfsc STATUS,Z  
+01F3   341F           00817         retlw simbE     
+                      00818 
+01F4   08??           00819         movf temp,0
+01F5   3A46           00820         xorlw 'F'
+01F6   1903           00821         btfsc STATUS,Z  
+01F7   3417           00822         retlw simbF
+                      00823 
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01F8   08??           00824         movf temp,0
+01F9   3A47           00825         xorlw 'G'
+01FA   1903           00826         btfsc STATUS,Z  
+01FB   345D           00827         retlw simbG
+                      00828 
+01FC   08??           00829         movf temp,0
+01FD   3A48           00830         xorlw 'H'
+01FE   1903           00831         btfsc STATUS,Z  
+01FF   3467           00832         retlw simbH
+                      00833 
+0200   08??           00834         movf temp,0
+0201   3A4A           00835         xorlw 'J'
+0202   1903           00836         btfsc STATUS,Z  
+0203   346C           00837         retlw simbJ
+                      00838 
+0204   08??           00839         movf temp,0
+0205   3A4C           00840         xorlw 'L'
+0206   1903           00841         btfsc STATUS,Z  
+0207   340D           00842         retlw simbL
+                      00843 
+0208   08??           00844         movf temp,0
+0209   3A6E           00845         xorlw 'n'
+020A   1903           00846         btfsc STATUS,Z  
+020B   3446           00847         retlw simbn
+                      00848 
+020C   08??           00849         movf temp,0
+020D   3A4F           00850         xorlw 'O'
+020E   1903           00851         btfsc STATUS,Z  
+020F   347D           00852         retlw simb0
+                      00853 
+0210   08??           00854         movf temp,0
+0211   3A70           00855         xorlw 'p'
+0212   1903           00856         btfsc STATUS,Z  
+0213   3437           00857         retlw simbP
+                      00858 
+0214   08??           00859         movf temp,0
+0215   3A72           00860         xorlw 'r'
+0216   1903           00861         btfsc STATUS,Z  
+0217   3406           00862         retlw simbr
+                      00863 
+0218   08??           00864         movf temp,0
+0219   3A53           00865         xorlw 'S'
+021A   1903           00866         btfsc STATUS,Z  
+021B   345B           00867         retlw simb5
+                      00868 
+021C   08??           00869         movf temp,0
+021D   3A74           00870         xorlw 't'
+021E   1903           00871         btfsc STATUS,Z  
+021F   340F           00872         retlw simbt
+                      00873 
+0220   08??           00874         movf temp,0
+0221   3A55           00875         xorlw 'U'
+0222   1903           00876         btfsc STATUS,Z  
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0223   346D           00877         retlw simbU
+                      00878 
+0224   08??           00879         movf temp,0
+0225   3A59           00880         xorlw 'Y'
+0226   1903           00881         btfsc STATUS,Z  
+0227   346B           00882         retlw simbY
+                      00883 
+0228   08??           00884         movf temp,0
+0229   3A2D           00885         xorlw '-'
+022A   1903           00886         btfsc STATUS,Z  
+022B   3402           00887         retlw simbmin
+                      00888 
+022C   08??           00889         movf temp,0
+022D   3A20           00890         xorlw ' '
+022E   1903           00891         btfsc STATUS,Z  
+022F   3400           00892         retlw empty
+0230   0008           00893         return
+                      00894 ;---------------------------------------------------------------------------
+                      00895         end
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS10                             00000002
+ANS11                             00000003
+ANS12                             00000004
+ANS13                             00000005
+ANS2                              00000002
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+ANSEL                             00000188
+ANSELH                            00000189
+ASCII_buf                         00000004
+ASCII_to_LCDcode                  000001B6
+BAUDCTL                           00000187
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BIAS_1_3                          00000177
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+BRG5                              00000005
+BRG6                              00000006
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+BRGH                              00000002
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1IE                              00000005
+C1IF                              00000005
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SEN                             00000005
+C2CH0                             00000000
+C2CH1                             00000001
+C2IE                              00000006
+C2IF                              00000006
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2REN                             00000004
+C2RSEL                            00000004
+C2SYNC                            00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000002
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CKE                               00000006
+CKP                               00000004
+CM1CON0                           00000107
+CM2CON0                           00000108
+CM2CON1                           00000109
+COMMAND                           0000012F
+CREN                              00000004
+CS                                PORTB,4
+CSRC                              00000007
+Convert_ASCII_to_LCD              00000083
+D                                 00000005
+DATA_ADDRESS                      00000005
+DATA_PIN                          PORTB,7
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+D_A                               00000005
+D_NOT_A                           00000005
+Data_to_LCD                       00000044
+Display_Data                      00000001
+ECCPAS                            0000009C
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDAT                             0000010C
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+FVREN                             00000000
+GCEN                              00000007
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+HTS                               00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOCB                              00000096
+IOCB0                             00000000
+IOCB1                             00000001
+IOCB2                             00000002
+IOCB3                             00000003
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+LCD_Data_Duplicate                0000001D
+LCD_OFF                           0000018A
+LCD_ON                            000001A0
+LTS                               00000001
+MC1OUT                            00000007
+MC2OUT                            00000006
+MSK                               00000093
+MSK0                              00000000
+MSK1                              00000001
+MSK2                              00000002
+MSK3                              00000003
+MSK4                              00000004
+MSK5                              00000005
+MSK6                              00000006
+MSK7                              00000007
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000007
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+OSFIF                             00000007
+OSTS                              00000003
+P                                 00000004
+P1M0                              00000006
+P1M1                              00000007
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PORTD                             00000008
+PORTE                             00000009
+PR2                               00000092
+PRSEN                             00000007
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PSTRCON                           0000009D
+PULSR                             00000002
+PULSS                             00000003
+PWM1CON                           0000009B
+PrintFirstStr                     0000009E
+PrintMsg                          000000F7
+PrintSecondStr                    000000BC
+PrintSimb                         00000070
+PrintThirdStr                     000000DA
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RA7                               00000007
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RC_256K                           00000164
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+S                                 00000003
+SBOREN                            00000004
+SCKP                              00000004
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SCS                               00000000
+SEN                               00000000
+SENDB                             00000003
+SET_BANK0                         
+SET_ONE                           0000010F
+SET_ZERO                          000000FB
+SMP                               00000007
+SPBRG                             00000099
+SPBRGH                            0000009A
+SPEN                              00000007
+SR0                               00000006
+SR1                               00000007
+SRCON                             00000185
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000093
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+SWDTEN                            00000000
+SYNC                              00000004
+SYS_EN                            0000014F
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GINV                            00000007
+T1GIV                             00000007
+T1GSS                             00000001
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TNORMAL                           00000142
+TONE4K                            00000135
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000088
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000089
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRISE3                            00000003
+TRMT                              00000001
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+UA                                00000001
+ULPWUE                            00000005
+ULPWUIE                           00000002
+ULPWUIF                           00000002
+VCFG0                             00000004
+VCFG1                             00000005
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000097
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+VRSS                              00000004
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000105
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPUB                              00000095
+WPUB0                             00000000
+WPUB1                             00000001
+WPUB2                             00000002
+WPUB3                             00000003
+WPUB4                             00000004
+WPUB5                             00000005
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPUB6                             00000006
+WPUB7                             00000007
+WR                                PORTB,5
+WREN                              00000002
+WRERR                             00000003
+WRITE                             00000123
+WUE                               00000001
+Z                                 00000002
+_.code_002C                       0000002C
+_.code_006B                       0000006B
+_.code_0073                       00000073
+_.code_0090                       00000090
+_.code_00AB                       000000AB
+_.code_00C9                       000000C9
+_.code_00E7                       000000E7
+_.code_0103                       00000103
+_.code_010C                       0000010C
+_.code_0117                       00000117
+_.code_0120                       00000120
+_.code_0129                       00000129
+_.code_0161                       00000161
+_.code_0174                       00000174
+_.code_0187                       00000187
+_.code_019D                       0000019D
+_.code_01B3                       000001B3
+_BOR21V                           00003EFF
+_BOR40V                           00003FFF
+_BOR4V_BOR21V                     00003EFF
+_BOR4V_BOR40V                     00003FFF
+_BOREN_NSLEEP                     00003EFF
+_BOREN_OFF                        00003CFF
+_BOREN_ON                         00003FFF
+_BOREN_SBODEN                     00003DFF
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_BOR_SBODEN                       00003DFF
+_CONFIG1                          00002007
+_CONFIG2                          00002008
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         00001FFF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 30
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_FOSC_EC                          00003FFB
+_FOSC_EXTRC_CLKOUT                00003FFF
+_FOSC_EXTRC_NOCLKOUT              00003FFE
+_FOSC_HS                          00003FFA
+_FOSC_INTRC_CLKOUT                00003FFD
+_FOSC_INTRC_NOCLKOUT              00003FFC
+_FOSC_LP                          00003FF8
+_FOSC_XT                          00003FF9
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_LVP_OFF                          00002FFF
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDTE_OFF                         00003FF7
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FF9
+__16F887                          00000001
+__DEBUG                           1
+buf_temp                          00000001
+counter                           00000002
+empty                             00000000
+init_LCD                          00000000
+nextASCII                         0000008A
+nextASCII_1                       000000A5
+nextASCII_2                       000000C3
+nextASCII_3                       000000E1
+next_dupl                         0000003D
+next_dupl_bit                     00000032
+next_dupl_byte                    00000030
+pause_3us                         00000000
+pause_5us                         00000000
+send_next_bit                     00000057
+send_next_byte                    00000053
+send_zero                         0000006E
+MPASM  5.51                     TM1621LCD.ASM   2-17-2018  18:18:22         PAGE 31
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+send_zero_1                       00000154
+send_zero_2                       0000018F
+send_zero_3                       000001A5
+send_zero_4                       0000004C
+shift_bit                         0000005A
+simb0                             0000007D
+simb0_                            000000FD
+simb1                             00000060
+simb1_                            000000E0
+simb2                             0000003E
+simb2_                            000000BE
+simb3                             0000007A
+simb3_                            000000FA
+simb4                             00000063
+simb4_                            000000E3
+simb5                             0000005B
+simb5_                            000000DB
+simb6                             0000005F
+simb6_                            000000DF
+simb7                             00000070
+simb7_                            000000F0
+simb8                             0000007F
+simb8_                            000000FF
+simb9                             0000007B
+simb9_                            000000FB
+simbA                             00000077
+simbC                             0000001D
+simbE                             0000001F
+simbF                             00000017
+simbG                             0000005D
+simbH                             00000067
+simbJ                             0000006C
+simbL                             0000000D
+simbP                             00000037
+simbU                             0000006D
+simbY                             0000006B
+simb_pos                          00000000
+simb_temp                         00000003
+simbb                             0000004F
+simbd                             0000006E
+simbmin                           00000002
+simbn                             00000046
+simbr                             00000006
+simbt                             0000000F
+temp                              00000000
+test_dupl_bit                     00000035
+zero_dupl                         00000042
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+
