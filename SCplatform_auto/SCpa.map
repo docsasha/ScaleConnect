@@ -1,17 +1,17 @@
 MPLINK 4.49, Linker
-Linker Map File - Created Sat Feb 17 18:18:24 2018
+Linker Map File - Created Mon Feb 19 12:24:32 2018
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000002
                    .cinit    romdata   0x000001    program   0x000004
-                   .org_1       code   0x000004    program   0x000270
-                    .code       code   0x00013c    program   0x0004e6
+                   .org_1       code   0x000004    program   0x000302
+                    .code       code   0x000185    program   0x000694
       .config_2007_SCPA.O       code   0x002007    program   0x000002
       .config_2008_SCPA.O       code   0x002008    program   0x000002
-                   .udata      udata   0x000020       data   0x000038
-               .udata_ovr      udata   0x000058       data   0x000005
+                   .udata      udata   0x000020       data   0x000039
+               .udata_ovr      udata   0x000059       data   0x000005
 
 
 
@@ -19,135 +19,148 @@ Linker Map File - Created Sat Feb 17 18:18:24 2018
                                Start         End      
                            ---------   ---------      
                             0x000000    0x000002      
-                            0x000004    0x0003ae      
+                            0x000004    0x0004ce      
                             0x002007    0x002008      
-            944 out of 8455 program addresses used, program memory utilization is 11%
+            1232 out of 8455 program addresses used, program memory utilization is 14%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-         ASCII_to_LCDcode   0x000334    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 BIAS_1_3   0x0002f5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  COMMAND   0x0002ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-     Convert_ASCII_to_LCD   0x000201    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              Data_to_LCD   0x0001c2    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+         ASCII_to_LCDcode   0x000454    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 BIAS_1_3   0x000415    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  COMMAND   0x0003cd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  ClrKoma   0x0002e6    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+     Convert_ASCII_to_LCD   0x00024a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              Data_to_LCD   0x00020b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
          LCD_Data_Capture   0x000005    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-       LCD_Data_Duplicate   0x00019b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-       LCD_Data_Recognize   0x000173    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
-                  LCD_OFF   0x000308    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   LCD_ON   0x00031e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            PrintFirstStr   0x00021c    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 PrintMsg   0x000275    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           PrintSecondStr   0x00023a    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                PrintSimb   0x0001ee    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            PrintThirdStr   0x000258    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  RC_256K   0x0002e2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+       LCD_Data_Duplicate   0x0001e4    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+       LCD_Data_Recognize   0x0001bc    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
+                  LCD_OFF   0x000428    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   LCD_ON   0x00043e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            PrintFirstStr   0x000333    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 PrintMsg   0x000395    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           PrintSecondStr   0x000354    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                PrintSimb   0x000237    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            PrintThirdStr   0x000375    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  RC_256K   0x000402    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
                 SET_BANK0   0x000038    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-                  SET_ONE   0x00028d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 SET_ZERO   0x000279    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   SYS_EN   0x0002cd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  TNORMAL   0x0002c0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   TONE4K   0x0002b3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                    WRITE   0x0002a1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_002C   0x0001aa    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_006B   0x0001e9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0073   0x0001f1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0090   0x00020e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00AB   0x000229    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00C9   0x000247    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00E7   0x000265    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0103   0x000281    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_010C   0x00028a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0117   0x000295    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0120   0x00029e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0129   0x0002a7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0161   0x0002df    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0174   0x0002f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0187   0x000305    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_019D   0x00031b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_01B3   0x000331    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  SET_ONE   0x0003ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 SET_ZERO   0x000399    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   SYS_EN   0x0003ed    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  SetKoma   0x000299    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  TNORMAL   0x0003e0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   TONE4K   0x0003d3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                    WRITE   0x0003c1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_002C   0x0001f3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_006B   0x000232    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0073   0x00023a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0090   0x000257    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0179   0x000340    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_019A   0x000361    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01BB   0x000382    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01DA   0x0003a1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01E3   0x0003aa    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01EE   0x0003b5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01F7   0x0003be    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0200   0x0003c7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0238   0x0003ff    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_024B   0x000412    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_025E   0x000425    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0274   0x00043b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_028A   0x000451    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
              _.org_1_0036   0x000036    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
              _.org_1_004E   0x00004e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0076   0x000076    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_007B   0x00007b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_008D   0x00008d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0092   0x000092    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00A4   0x0000a4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00A9   0x0000a9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00BD   0x0000bd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00C2   0x0000c2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00CC   0x0000cc    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00D1   0x0000d1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_007A   0x00007a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_007F   0x00007f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0091   0x000091    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0096   0x000096    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00A8   0x0000a8    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00AD   0x0000ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00BF   0x0000bf    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00C4   0x0000c4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00D6   0x0000d6    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
              _.org_1_00DB   0x0000db    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00E0   0x0000e0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00EA   0x0000ea    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00EF   0x0000ef    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00F9   0x0000f9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00FE   0x0000fe    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0108   0x000108    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_010D   0x00010d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0110   0x000110    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_013B   0x00013b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-                  cicle70   0x000144    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle71   0x000142    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle72   0x000140    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle80   0x000153    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle81   0x000151    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle82   0x00014f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle90   0x000162    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle91   0x000160    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle92   0x00015e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+             _.org_1_00ED   0x0000ed    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00F2   0x0000f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0106   0x000106    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_010B   0x00010b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0115   0x000115    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_011A   0x00011a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0124   0x000124    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0129   0x000129    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0133   0x000133    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0138   0x000138    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0142   0x000142    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0147   0x000147    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0151   0x000151    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0156   0x000156    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0159   0x000159    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0184   0x000184    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+                  cicle70   0x00018d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle71   0x00018b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle72   0x000189    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle80   0x00019c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle81   0x00019a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle82   0x000198    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle90   0x0001ab    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle91   0x0001a9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle92   0x0001a7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
                 clr_bufer   0x000039    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621ClrBuf.inc
                  exit_int   0x000033    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-                   initMC   0x000111    program     static C:\picmicro\ScaleConnect\SCplatform_auto\initMC.inc
-                 init_LCD   0x00017e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                nextASCII   0x000208    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_1   0x000223    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_2   0x000241    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_3   0x00025f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                next_dupl   0x0001bb    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            next_dupl_bit   0x0001b0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           next_dupl_byte   0x0001ae    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   initMC   0x00015a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\initMC.inc
+                 init_LCD   0x0001c7    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 koma_set   0x000268    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set1   0x000278    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set2   0x000282    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set3   0x00028c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                nextASCII   0x000251    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_1   0x00033a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_2   0x00035b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_3   0x00037c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                next_dupl   0x000204    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            next_dupl_bit   0x0001f9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           next_dupl_byte   0x0001f7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                next_koma   0x000274    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
              next_lcd_bit   0x000007    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
             next_lcd_byte   0x000005    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-                  not_137   0x00017d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
-                pause_05s   0x00015a    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                 pause_1s   0x00014b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                pause_3us   0x00016e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                 pause_5s   0x00013c    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                pause_5us   0x000169    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-             pause_cicle3   0x000170    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-             pause_cicle5   0x00016b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-            send_next_bit   0x0001d5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           send_next_byte   0x0001d1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                send_zero   0x0001ec    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_1   0x0002d2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_2   0x00030d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_3   0x000323    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_4   0x0001ca    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                shift_bit   0x0001d8    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  not_137   0x0001c6    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
+                pause_05s   0x0001a3    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                 pause_1s   0x000194    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                pause_3us   0x0001b7    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                 pause_5s   0x000185    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                pause_5us   0x0001b2    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+             pause_cicle3   0x0001b9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+             pause_cicle5   0x0001b4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+            send_next_bit   0x00021e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           send_next_byte   0x00021a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                send_zero   0x000235    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_1   0x0003f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_2   0x00042d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_3   0x000443    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_4   0x000213    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                shift_bit   0x000221    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
                     start   0x000042    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
                 temp_exit   0x00002f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-            test_dupl_bit   0x0001b3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            test_dupl_bit   0x0001fc    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
            test_lcd_bytes   0x00001b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
                  wait_WR0   0x000007    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
                  wait_WR1   0x00000b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-                zero_dupl   0x0001c0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                ASCII_buf   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                zero_dupl   0x000209    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
              Display_Data   0x000048       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  KomaPos   0x000058       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
                 LCD_bufer   0x000020       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
                bit_buffer   0x000033       data     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-                 buf_temp   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 buf_temp   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
               bufer_count   0x000032       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
               byte_buffer   0x000034       data     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-                   counta   0x000058       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                   countb   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                   countc   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  counter   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   counta   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                   countb   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                   countc   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  counter   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
                      koma   0x000045       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
-                       m5   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                       m5   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
                    seg1_1   0x000035       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
                    seg1_2   0x000036       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
                    seg1_3   0x000037       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
@@ -165,8 +178,9 @@ Linker Map File - Created Sat Feb 17 18:18:24 2018
                    seg3_5   0x000043       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
                    seg3_6   0x000044       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
                  simb_pos   0x000047       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                simb_temp   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                     temp   0x000058       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                simb_temp   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                     temp   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                    temp2   0x00005d       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
 
 
 
@@ -175,8 +189,8 @@ Linker Map File - Created Sat Feb 17 18:18:24 2018
                 ---------  ---------  ---------  --------- ---------                
          LCD_Data_Capture   0x000005    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
             next_lcd_byte   0x000005    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
-             next_lcd_bit   0x000007    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
                  wait_WR0   0x000007    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
+             next_lcd_bit   0x000007    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
                  wait_WR1   0x00000b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
            test_lcd_bytes   0x00001b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
                 temp_exit   0x00002f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Capture.inc
@@ -186,100 +200,113 @@ Linker Map File - Created Sat Feb 17 18:18:24 2018
                 clr_bufer   0x000039    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621ClrBuf.inc
                     start   0x000042    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
              _.org_1_004E   0x00004e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0076   0x000076    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_007B   0x00007b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_008D   0x00008d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0092   0x000092    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00A4   0x0000a4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00A9   0x0000a9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00BD   0x0000bd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00C2   0x0000c2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00CC   0x0000cc    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00D1   0x0000d1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_007A   0x00007a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_007F   0x00007f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0091   0x000091    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0096   0x000096    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00A8   0x0000a8    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00AD   0x0000ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00BF   0x0000bf    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00C4   0x0000c4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00D6   0x0000d6    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
              _.org_1_00DB   0x0000db    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00E0   0x0000e0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00EA   0x0000ea    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00EF   0x0000ef    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00F9   0x0000f9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_00FE   0x0000fe    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0108   0x000108    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_010D   0x00010d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-             _.org_1_0110   0x000110    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-                   initMC   0x000111    program     static C:\picmicro\ScaleConnect\SCplatform_auto\initMC.inc
-             _.org_1_013B   0x00013b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
-                 pause_5s   0x00013c    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle72   0x000140    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle71   0x000142    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle70   0x000144    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                 pause_1s   0x00014b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle82   0x00014f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle81   0x000151    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle80   0x000153    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                pause_05s   0x00015a    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle92   0x00015e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle91   0x000160    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                  cicle90   0x000162    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                pause_5us   0x000169    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-             pause_cicle5   0x00016b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                pause_3us   0x00016e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-             pause_cicle3   0x000170    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-       LCD_Data_Recognize   0x000173    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
-                  not_137   0x00017d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
-                 init_LCD   0x00017e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-       LCD_Data_Duplicate   0x00019b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_002C   0x0001aa    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           next_dupl_byte   0x0001ae    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            next_dupl_bit   0x0001b0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            test_dupl_bit   0x0001b3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                next_dupl   0x0001bb    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                zero_dupl   0x0001c0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              Data_to_LCD   0x0001c2    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_4   0x0001ca    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           send_next_byte   0x0001d1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            send_next_bit   0x0001d5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                shift_bit   0x0001d8    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_006B   0x0001e9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                send_zero   0x0001ec    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                PrintSimb   0x0001ee    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0073   0x0001f1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-     Convert_ASCII_to_LCD   0x000201    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                nextASCII   0x000208    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0090   0x00020e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            PrintFirstStr   0x00021c    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_1   0x000223    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00AB   0x000229    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-           PrintSecondStr   0x00023a    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_2   0x000241    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00C9   0x000247    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-            PrintThirdStr   0x000258    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              nextASCII_3   0x00025f    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_00E7   0x000265    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 PrintMsg   0x000275    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 SET_ZERO   0x000279    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0103   0x000281    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_010C   0x00028a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  SET_ONE   0x00028d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0117   0x000295    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0120   0x00029e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                    WRITE   0x0002a1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0129   0x0002a7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  COMMAND   0x0002ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   TONE4K   0x0002b3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  TNORMAL   0x0002c0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   SYS_EN   0x0002cd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_1   0x0002d2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0161   0x0002df    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  RC_256K   0x0002e2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0174   0x0002f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                 BIAS_1_3   0x0002f5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_0187   0x000305    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  LCD_OFF   0x000308    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_2   0x00030d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_019D   0x00031b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   LCD_ON   0x00031e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              send_zero_3   0x000323    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-              _.code_01B3   0x000331    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-         ASCII_to_LCDcode   0x000334    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+             _.org_1_00ED   0x0000ed    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_00F2   0x0000f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0106   0x000106    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_010B   0x00010b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0115   0x000115    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_011A   0x00011a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0124   0x000124    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0129   0x000129    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0133   0x000133    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0138   0x000138    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0142   0x000142    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0147   0x000147    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0151   0x000151    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0156   0x000156    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+             _.org_1_0159   0x000159    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+                   initMC   0x00015a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\initMC.inc
+             _.org_1_0184   0x000184    program     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
+                 pause_5s   0x000185    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle72   0x000189    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle71   0x00018b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle70   0x00018d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                 pause_1s   0x000194    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle82   0x000198    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle81   0x00019a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle80   0x00019c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                pause_05s   0x0001a3    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle92   0x0001a7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle91   0x0001a9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                  cicle90   0x0001ab    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                pause_5us   0x0001b2    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+             pause_cicle5   0x0001b4    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                pause_3us   0x0001b7    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+             pause_cicle3   0x0001b9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+       LCD_Data_Recognize   0x0001bc    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
+                  not_137   0x0001c6    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
+                 init_LCD   0x0001c7    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+       LCD_Data_Duplicate   0x0001e4    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_002C   0x0001f3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           next_dupl_byte   0x0001f7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            next_dupl_bit   0x0001f9    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            test_dupl_bit   0x0001fc    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                next_dupl   0x000204    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                zero_dupl   0x000209    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              Data_to_LCD   0x00020b    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_4   0x000213    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           send_next_byte   0x00021a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            send_next_bit   0x00021e    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                shift_bit   0x000221    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_006B   0x000232    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                send_zero   0x000235    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                PrintSimb   0x000237    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0073   0x00023a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+     Convert_ASCII_to_LCD   0x00024a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                nextASCII   0x000251    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0090   0x000257    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 koma_set   0x000268    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                next_koma   0x000274    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set1   0x000278    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set2   0x000282    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                koma_set3   0x00028c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  SetKoma   0x000299    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  ClrKoma   0x0002e6    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            PrintFirstStr   0x000333    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_1   0x00033a    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0179   0x000340    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+           PrintSecondStr   0x000354    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_2   0x00035b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_019A   0x000361    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+            PrintThirdStr   0x000375    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              nextASCII_3   0x00037c    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01BB   0x000382    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 PrintMsg   0x000395    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 SET_ZERO   0x000399    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01DA   0x0003a1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01E3   0x0003aa    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  SET_ONE   0x0003ad    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01EE   0x0003b5    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_01F7   0x0003be    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                    WRITE   0x0003c1    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0200   0x0003c7    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  COMMAND   0x0003cd    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   TONE4K   0x0003d3    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  TNORMAL   0x0003e0    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   SYS_EN   0x0003ed    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_1   0x0003f2    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0238   0x0003ff    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  RC_256K   0x000402    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_024B   0x000412    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                 BIAS_1_3   0x000415    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_025E   0x000425    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  LCD_OFF   0x000428    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_2   0x00042d    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_0274   0x00043b    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   LCD_ON   0x00043e    program     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              send_zero_3   0x000443    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+              _.code_028A   0x000451    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+         ASCII_to_LCDcode   0x000454    program     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
                 LCD_bufer   0x000020       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
               bufer_count   0x000032       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
                bit_buffer   0x000033       data     static C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.asm
@@ -303,14 +330,15 @@ Linker Map File - Created Sat Feb 17 18:18:24 2018
                      koma   0x000045       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.asm
                  simb_pos   0x000047       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
              Display_Data   0x000048       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                     temp   0x000058       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   counta   0x000058       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                   countb   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                 buf_temp   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                  counter   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                   countc   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                       m5   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
-                simb_temp   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
-                ASCII_buf   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  KomaPos   0x000058       data     extern C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   counta   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                     temp   0x000059       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   countb   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                 buf_temp   0x00005a       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                  counter   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                   countc   0x00005b       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                       m5   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.asm
+                simb_temp   0x00005c       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
+                    temp2   0x00005d       data     static C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.asm
 
 

@@ -5,7 +5,7 @@
 	global init_LCD, LCD_Data_Duplicate, Data_to_LCD
 	global LCD_ON, LCD_OFF, PrintSimb, PrintMsg
 	global PrintFirstStr, PrintSecondStr, PrintThirdStr
-;	global SetKoma, ClrKoma, KomaPos, koma_set
+	global SetKoma, ClrKoma, KomaPos, koma_set
 
 	#define CS PORTB,4
 	#define WR PORTB,5
@@ -17,14 +17,13 @@
 	udata
 simb_pos	res 1
 Display_Data res .16 ;область содержащая коды для вывода на экран
-;KomaPos		res 1
+KomaPos		res 1
 	udata_ovr
 temp 		res 1
 buf_temp 	res 1
 counter 	res 1
 simb_temp 	res 1
-ASCII_buf	res 1
-;temp2		res 1
+temp2		res 1
 ;------------------------------------------------------------------------------
 ;макросы
 ;-----------------------------------------------------------------
@@ -194,9 +193,9 @@ nextASCII
 	decfsz counter,1
 	goto nextASCII
 
-;	movf buf_temp,0
-;	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
-;	call koma_set ;расставляем запятые
+	movf buf_temp,0
+	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+	call koma_set ;расставляем запятые
 	
 	movf simb_temp,0
 	movwf FSR ;восстанавливаем FSR
@@ -204,224 +203,224 @@ nextASCII
 ;-----------------------------------------------------------------------
 ;установка запятых в зависимости от состояния переменной записанной
 ;в двух байтах начиная с адреса указанного в аккумуляторе
-;koma_set
-;	banksel temp
-;	movwf FSR
-;	movf INDF,0
-;	movwf temp
-;	incf FSR,1
-;	movf INDF,0
-;	movwf temp2	
+koma_set
+	banksel temp
+	movwf FSR
+	movf INDF,0
+	movwf temp
+	incf FSR,1
+	movf INDF,0
+	movwf temp2
 
-;	movlw Display_Data 
-;	movwf FSR
-;	movlw .16
-;	movwf counter
-;next_koma
-;	bcf INDF, 7
-;	incf FSR,1
-;	decfsz counter,1
-;	goto next_koma	
+	movlw Display_Data ;изначально удаляем все запятые 
+	movwf FSR ;чтоб потом поставить в нужном месте
+	movlw .16
+	movwf counter
+next_koma
+	bcf INDF, 7
+	incf FSR,1
+	decfsz counter,1
+	goto next_koma	
 
-;koma_set1
+koma_set1
 	;точка у нас 7й бит кода символа поэтому проверяем koma и ставим ее если нужно
-;	btfsc temp,7
-;	bsf Display_Data+.15,7
-;	btfsc temp,6
-;	bsf Display_Data+.14,7
-;	btfsc temp,5
-;	bsf Display_Data+.13,7
-;	btfsc temp,4
-;	bsf Display_Data+.12,7
-;	btfsc temp,3
-;	bsf Display_Data+.11,7
-;koma_set2
-;	btfsc temp,2
-;	bsf Display_Data+.10,7
-;	btfsc temp,1
-;	bsf Display_Data+.9,7
-;	btfsc temp,0
-;	bsf Display_Data+.8,7
-;	btfsc temp2,7
-;	bsf Display_Data+.7,7
-;	btfsc temp2,6
-;	bsf Display_Data+.6,7
-;koma_set3
-;	btfsc temp2,5
-;	bsf Display_Data+.5,7
-;	btfsc temp2,4
-;	bsf Display_Data+.4,7
-;	btfsc temp2,3
-;	bsf Display_Data+.3,7
-;	btfsc temp2,2
-;	bsf Display_Data+.2,7
-;	btfsc temp2,1
-;	bsf Display_Data+.1,7
-;	btfsc temp2,0
-;	bsf Display_Data,7
-;	return
+	btfsc temp,7
+	bsf Display_Data+.15,7
+	btfsc temp,6
+	bsf Display_Data+.14,7
+	btfsc temp,5
+	bsf Display_Data+.13,7
+	btfsc temp,4
+	bsf Display_Data+.12,7
+	btfsc temp,3
+	bsf Display_Data+.11,7
+koma_set2
+	btfsc temp,2
+	bsf Display_Data+.10,7
+	btfsc temp,1
+	bsf Display_Data+.9,7
+	btfsc temp,0
+	bsf Display_Data+.8,7
+	btfsc temp2,7
+	bsf Display_Data+.7,7
+	btfsc temp2,6
+	bsf Display_Data+.6,7
+koma_set3
+	btfsc temp2,5
+	bsf Display_Data+.5,7
+	btfsc temp2,4
+	bsf Display_Data+.4,7
+	btfsc temp2,3
+	bsf Display_Data+.3,7
+	btfsc temp2,2
+	bsf Display_Data+.2,7
+	btfsc temp2,1
+	bsf Display_Data+.1,7
+	btfsc temp2,0
+	bsf Display_Data,7
+	return
 ;-----------------------------------------------------------------------
 ;- Установить запятую
 ;SetKoma(komaPos)
 ;KomaPos – разряд перед которым надо поставить запятую
 ;в аккумуляторе адрес области из двух байт с позициями запятых
-;SetKoma
-;	banksel buf_temp
-;	movwf buf_temp
-;	movf FSR,0 ;сохраняем FSR
-;	movwf simb_temp
-;	movf buf_temp,0
-;	movwf FSR
-;	banksel KomaPos
-;	movf KomaPos,0
-;	xorlw .1
-;	btfsc STATUS,Z
-;	bsf INDF,7
-;	movf KomaPos,0
-;	xorlw .2
-;	btfsc STATUS,Z
-;	bsf INDF,6
-;	movf KomaPos,0
-;	xorlw .3
-;	btfsc STATUS,Z
-;	bsf INDF,5
-;	movf KomaPos,0
-;	xorlw .4
-;	btfsc STATUS,Z
-;	bsf INDF,4
-;	movf KomaPos,0
-;	xorlw .5
-;	btfsc STATUS,Z
-;	bsf INDF,3
-;	movf KomaPos,0
-;	xorlw .6
-;	btfsc STATUS,Z
-;	bsf INDF,2
-;	movf KomaPos,0
-;	xorlw .7
-;	btfsc STATUS,Z
-;	bsf INDF,1
-;	movf KomaPos,0
-;	xorlw .8
-;	btfsc STATUS,Z
-;	bsf INDF,0
-;	incf FSR,1
-;	movf KomaPos,0
-;	xorlw .9
-;	btfsc STATUS,Z
-;	bsf INDF,7
-;	movf KomaPos,0
-;	xorlw .10
-;	btfsc STATUS,Z
-;	bsf INDF,6
-;	movf KomaPos,0
-;	xorlw .11
-;	btfsc STATUS,Z
-;	bsf INDF,5
-;	movf KomaPos,0
-;	xorlw .12
-;	btfsc STATUS,Z
-;	bsf INDF,4
-;	movf KomaPos,0
-;	xorlw .13
-;	btfsc STATUS,Z
-;	bsf INDF,3
-;	movf KomaPos,0
-;	xorlw .14
-;	btfsc STATUS,Z
-;	bsf INDF,2
-;	movf KomaPos,0
-;	xorlw .15
-;	btfsc STATUS,Z
-;	bsf INDF,1
-;	movf KomaPos,0
-;	xorlw .16
-;	btfsc STATUS,Z
-;	bsf INDF,0
-;	movf simb_temp,0
-;	movwf FSR ;восстанавливаем FSR
-;	return
+SetKoma
+	banksel buf_temp
+	movwf buf_temp
+	movf FSR,0 ;сохраняем FSR
+	movwf simb_temp
+	movf buf_temp,0
+	movwf FSR
+	banksel KomaPos
+	movf KomaPos,0
+	xorlw .1
+	btfsc STATUS,Z
+	bsf INDF,7
+	movf KomaPos,0
+	xorlw .2
+	btfsc STATUS,Z
+	bsf INDF,6
+	movf KomaPos,0
+	xorlw .3
+	btfsc STATUS,Z
+	bsf INDF,5
+	movf KomaPos,0
+	xorlw .4
+	btfsc STATUS,Z
+	bsf INDF,4
+	movf KomaPos,0
+	xorlw .5
+	btfsc STATUS,Z
+	bsf INDF,3
+	movf KomaPos,0
+	xorlw .6
+	btfsc STATUS,Z
+	bsf INDF,2
+	movf KomaPos,0
+	xorlw .7
+	btfsc STATUS,Z
+	bsf INDF,1
+	movf KomaPos,0
+	xorlw .8
+	btfsc STATUS,Z
+	bsf INDF,0
+	incf FSR,1
+	movf KomaPos,0
+	xorlw .9
+	btfsc STATUS,Z
+	bsf INDF,7
+	movf KomaPos,0
+	xorlw .10
+	btfsc STATUS,Z
+	bsf INDF,6
+	movf KomaPos,0
+	xorlw .11
+	btfsc STATUS,Z
+	bsf INDF,5
+	movf KomaPos,0
+	xorlw .12
+	btfsc STATUS,Z
+	bsf INDF,4
+	movf KomaPos,0
+	xorlw .13
+	btfsc STATUS,Z
+	bsf INDF,3
+	movf KomaPos,0
+	xorlw .14
+	btfsc STATUS,Z
+	bsf INDF,2
+	movf KomaPos,0
+	xorlw .15
+	btfsc STATUS,Z
+	bsf INDF,1
+	movf KomaPos,0
+	xorlw .16
+	btfsc STATUS,Z
+	bsf INDF,0
+	movf simb_temp,0
+	movwf FSR ;восстанавливаем FSR
+	return
 ;-----------------------------------------------------------------------
 ;- Убрать запятую
 ;ClrKoma(komaPos)
 ;KomaPos – разряд перед которым надо убрать запятую
 ;в аккумуляторе адрес области из двух байт с позициями запятых
-;ClrKoma
-;	banksel buf_temp
-;	movwf buf_temp
-;	movf FSR,0 ;сохраняем FSR
-;	movwf simb_temp
-;	movf buf_temp,0
-;	movwf FSR
-;	banksel KomaPos
-;	movf KomaPos,0
-;	xorlw .1
-;	btfsc STATUS,Z
-;	bcf INDF,7
-;	movf KomaPos,0
-;	xorlw .2
-;	btfsc STATUS,Z
-;	bcf INDF,6
-;	movf KomaPos,0
-;	xorlw .3
-;	btfsc STATUS,Z
-;	bcf INDF,5
-;	movf KomaPos,0
-;	xorlw .4
-;	btfsc STATUS,Z
-;	bcf INDF,4
-;	movf KomaPos,0
-;	xorlw .5
-;	btfsc STATUS,Z
-;	bcf INDF,3
-;	movf KomaPos,0
-;	xorlw .6
-;	btfsc STATUS,Z
-;	bcf INDF,2
-;	movf KomaPos,0
-;	xorlw .7
-;	btfsc STATUS,Z
-;	bcf INDF,1
-;	movf KomaPos,0
-;	xorlw .8
-;	btfsc STATUS,Z
-;	bcf INDF,0
-;	incf FSR,1
-;	movf KomaPos,0
-;	xorlw .9
-;	btfsc STATUS,Z
-;	bcf INDF,7
-;	movf KomaPos,0
-;	xorlw .10
-;	btfsc STATUS,Z
-;	bcf INDF,6
-;	movf KomaPos,0
-;	xorlw .11
-;	btfsc STATUS,Z
-;	bcf INDF,5
-;	movf KomaPos,0
-;	xorlw .12
-;	btfsc STATUS,Z
-;	bcf INDF,4
-;	movf KomaPos,0
-;	xorlw .13
-;	btfsc STATUS,Z
-;	bcf INDF,3
-;	movf KomaPos,0
-;	xorlw .14
-;	btfsc STATUS,Z
-;	bcf INDF,2
-;	movf KomaPos,0
-;	xorlw .15
-;	btfsc STATUS,Z
-;	bcf INDF,1
-;	movf KomaPos,0
-;	xorlw .16
-;	btfsc STATUS,Z
-;	bcf INDF,0
-;	movf simb_temp,0
-;	movwf FSR ;восстанавливаем FSR
-;	return
+ClrKoma
+	banksel buf_temp
+	movwf buf_temp
+	movf FSR,0 ;сохраняем FSR
+	movwf simb_temp
+	movf buf_temp,0
+	movwf FSR
+	banksel KomaPos
+	movf KomaPos,0
+	xorlw .1
+	btfsc STATUS,Z
+	bcf INDF,7
+	movf KomaPos,0
+	xorlw .2
+	btfsc STATUS,Z
+	bcf INDF,6
+	movf KomaPos,0
+	xorlw .3
+	btfsc STATUS,Z
+	bcf INDF,5
+	movf KomaPos,0
+	xorlw .4
+	btfsc STATUS,Z
+	bcf INDF,4
+	movf KomaPos,0
+	xorlw .5
+	btfsc STATUS,Z
+	bcf INDF,3
+	movf KomaPos,0
+	xorlw .6
+	btfsc STATUS,Z
+	bcf INDF,2
+	movf KomaPos,0
+	xorlw .7
+	btfsc STATUS,Z
+	bcf INDF,1
+	movf KomaPos,0
+	xorlw .8
+	btfsc STATUS,Z
+	bcf INDF,0
+	incf FSR,1
+	movf KomaPos,0
+	xorlw .9
+	btfsc STATUS,Z
+	bcf INDF,7
+	movf KomaPos,0
+	xorlw .10
+	btfsc STATUS,Z
+	bcf INDF,6
+	movf KomaPos,0
+	xorlw .11
+	btfsc STATUS,Z
+	bcf INDF,5
+	movf KomaPos,0
+	xorlw .12
+	btfsc STATUS,Z
+	bcf INDF,4
+	movf KomaPos,0
+	xorlw .13
+	btfsc STATUS,Z
+	bcf INDF,3
+	movf KomaPos,0
+	xorlw .14
+	btfsc STATUS,Z
+	bcf INDF,2
+	movf KomaPos,0
+	xorlw .15
+	btfsc STATUS,Z
+	bcf INDF,1
+	movf KomaPos,0
+	xorlw .16
+	btfsc STATUS,Z
+	bcf INDF,0
+	movf simb_temp,0
+	movwf FSR ;восстанавливаем FSR
+	return
 ;-----------------------------------------------------------------------
 ;- Вывести сообщение в первой строке
 ;PrintFirstStr(MsgAddr)
@@ -456,9 +455,9 @@ nextASCII_1
 	decfsz counter,1
 	goto nextASCII_1
 
-;	movf buf_temp,0
-;	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
-;	call koma_set ;расставляем запятые
+	movf buf_temp,0
+	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+	call koma_set ;расставляем запятые
 
 	movf simb_temp,0
 	movwf FSR ;восстанавливаем FSR
@@ -500,9 +499,9 @@ nextASCII_2
 	decfsz counter,1
 	goto nextASCII_2
 
-;	movf buf_temp,0
-;	addlw .11 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
-;	call koma_set ;расставляем запятые
+	movf buf_temp,0
+	addlw .11 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+	call koma_set ;расставляем запятые
 
 	movf simb_temp,0
 	movwf FSR ;восстанавливаем FSR
@@ -543,9 +542,9 @@ nextASCII_3
 	decfsz counter,1
 	goto nextASCII_3
 
-;	movf buf_temp,0
-;	addlw .6 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
-;	call koma_set ;расставляем запятые
+	movf buf_temp,0
+	addlw .6 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+	call koma_set ;расставляем запятые
 
 	movf simb_temp,0
 	movwf FSR ;восстанавливаем FSR

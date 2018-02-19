@@ -101,7 +101,7 @@ SET_KOMA MACRO POS
 	banksel KomaPos
 	movlw POS
 	movwf KomaPos
-	banksel koma
+	movlw koma
 	lcall SetKoma
 	movlw koma	
 	lcall koma_set
@@ -115,7 +115,7 @@ CLR_KOMA MACRO POS
 	banksel KomaPos
 	movlw POS
 	movwf KomaPos
-	banksel koma
+	movlw koma
 	lcall ClrKoma
 	movlw koma
 	lcall koma_set

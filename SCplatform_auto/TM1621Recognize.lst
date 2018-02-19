@@ -1,4 +1,4 @@
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  1
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00041         ;то есть ряд длин 17,25,33,41,49,57,65,73,81,89,97,105,113,121,129,137
                       00042         ;остальные длины пакетов следует рассматривать как ошибочные
                       00043         ;3 бита код 101, 6 бит адреса, остальное коды символов по 8 бит 
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  2
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -109,7 +109,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00087 
                       00088 
                       00089         end
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  3
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  3
 
 
 SYMBOL TABLE
@@ -168,7 +168,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  4
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  4
 
 
 SYMBOL TABLE
@@ -227,7 +227,7 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  5
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  5
 
 
 SYMBOL TABLE
@@ -286,7 +286,7 @@ INTF                              00000001
 IOCB                              00000096
 IOCB0                             00000000
 IOCB1                             00000001
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  6
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  6
 
 
 SYMBOL TABLE
@@ -345,7 +345,7 @@ PCLATH                            0000000A
 PCON                              0000008E
 PDC0                              00000000
 PDC1                              00000001
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  7
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  7
 
 
 SYMBOL TABLE
@@ -404,7 +404,7 @@ RC0                               00000000
 RC1                               00000001
 RC2                               00000002
 RC3                               00000003
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  8
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  8
 
 
 SYMBOL TABLE
@@ -463,7 +463,7 @@ SSPBUF                            00000013
 SSPCON                            00000014
 SSPCON2                           00000091
 SSPEN                             00000005
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE  9
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE  9
 
 
 SYMBOL TABLE
@@ -522,7 +522,7 @@ TOUTPS1                           00000004
 TOUTPS2                           00000005
 TOUTPS3                           00000006
 TRISA                             00000085
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE 10
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE 10
 
 
 SYMBOL TABLE
@@ -581,7 +581,7 @@ TXD8                              00000000
 TXEN                              00000005
 TXIE                              00000004
 TXIF                              00000004
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE 11
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE 11
 
 
 SYMBOL TABLE
@@ -640,7 +640,7 @@ _BOR_SBODEN                       00003DFF
 _CONFIG1                          00002007
 _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE 12
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE 12
 
 
 SYMBOL TABLE
@@ -699,7 +699,7 @@ __DEBUG                           1
 bufer_count                       00000000
 koma                              00000010
 not_137                           0000000A
-MPASM  5.51               TM1621RECOGNIZE.ASM   2-17-2018  18:18:21         PAGE 13
+MPASM  5.51               TM1621RECOGNIZE.ASM   2-19-2018  12:24:28         PAGE 13
 
 
 SYMBOL TABLE

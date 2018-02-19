@@ -20,7 +20,7 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 	extern simb_pos, Display_Data, Data_to_LCD  ;<TM1621LCD.asm>
 	extern init_LCD, LCD_Data_Duplicate, PrintSimb,PrintMsg  ;<TM1621LCD.asm>
 	extern PrintFirstStr, PrintSecondStr, PrintThirdStr;<TM1621LCD.asm>
-;	extern SetKoma, ClrKoma, KomaPos, koma_set
+	extern SetKoma, ClrKoma, KomaPos, koma_set
 	;подключение модуля пауз
 	extern pause_5s, pause_1s, pause_05s ;<pauses_20MHz.asm>
 	;подключение модуля распознавания данных выводимых весами на дисплей
@@ -75,48 +75,42 @@ start
 	lcall clr_bufer ;<TM1621ClrBuf.inc> очистка указателей на буфер дисплея
 	pagesel $
 	;тестируем функции печати
+	banksel koma
+	clrf koma
+	clrf koma+.1
+
 	PRINT_STR 'H','E','L','L','O',' ','F','O','r',' ',' ','A','L','L',' ',' '
 	lcall pause_1s
 	pagesel $
+
+	SET_KOMA .1
+	lcall pause_1s
+	pagesel $
+
 	PRINT_STR_1 ' ','b','Y','E',' '
 	lcall pause_1s
 	pagesel $
+
+	SET_KOMA .2
+	lcall pause_1s
+	pagesel $
+
 	PRINT_STR_2 ' ','n','n','Y',' '
 	lcall pause_1s
 	pagesel $
+
+	SET_KOMA .3
+	lcall pause_1s
+	pagesel $
+
 	PRINT_STR_3 'F','r','1','E','n','d'
 	lcall pause_1s
 	pagesel $
-;	SET_KOMA .1
-;	lcall pause_1s
-;	pagesel $
-;	SET_KOMA .2
-;	lcall pause_1s
-;	pagesel $
-;	SET_KOMA .3
-;	lcall pause_1s
-;	pagesel $
-;	SET_KOMA .4
-;	lcall pause_1s
-;	pagesel $
-;	SET_KOMA .5
-;	lcall pause_1s
-;	pagesel $
+
 ;	CLR_KOMA .5 
 ;	lcall pause_1s
 ;	pagesel $
-;	CLR_KOMA .4 
-;	lcall pause_1s
-;	pagesel $
-;	CLR_KOMA .3 
-;	lcall pause_1s
-;	pagesel $
-;	CLR_KOMA .2 
-;	lcall pause_1s
-;	pagesel $
-;	CLR_KOMA .1 
-;	lcall pause_1s
-;	pagesel $
+
 	PRINT_SIMB 'd', .6
 	lcall pause_1s
 	pagesel $
