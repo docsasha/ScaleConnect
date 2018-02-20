@@ -9,7 +9,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -22,7 +22,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -35,7 +35,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -48,7 +48,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -61,7 +61,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -74,7 +74,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -87,7 +87,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -100,12 +100,64 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File008]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\RTCTime.o
+Folder=Intermediary
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File009]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\RTCTime.err
+Folder=Intermediary
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File010]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\EEPROM.o
+Folder=Intermediary
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File011]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\EEPROM.err
+Folder=Intermediary
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File012]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.lst
 Folder=Output
 DeviceName=PIC16F887
@@ -113,12 +165,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File009]
+[File013]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\pauses_20MHz.lst
 Folder=Output
 DeviceName=PIC16F887
@@ -126,12 +178,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File010]
+[File014]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\TM1621Recognize.lst
 Folder=Output
 DeviceName=PIC16F887
@@ -139,12 +191,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File011]
+[File015]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\TM1621LCD.lst
 Folder=Output
 DeviceName=PIC16F887
@@ -152,12 +204,38 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File012]
+[File016]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\RTCTime.lst
+Folder=Output
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File017]
+Location=C:\picmicro\ScaleConnect\SCplatform_auto\EEPROM.lst
+Folder=Output
+DeviceName=PIC16F887
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File018]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.cof
 Folder=Output
 DeviceName=PIC16F887
@@ -165,12 +243,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /W
 TraceCmdString=
 DebugOptions=/z__MPLAB_DEBUG=1
-[File013]
+[File019]
 Location=C:\picmicro\ScaleConnect\SCplatform_auto\SCpa.hex
 Folder=Output
 DeviceName=PIC16F887
@@ -178,7 +256,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
 LanguageToolLocation=D:\installed programs\mplab\MPASM Suite\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|SCpa.asm|pauses_20MHz.asm|TM1621Recognize.asm|TM1621LCD.asm|RTCTime.asm|EEPROM.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /W
 TraceCmdString=

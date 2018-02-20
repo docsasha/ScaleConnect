@@ -1,4 +1,4 @@
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  1
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Message[303]: Program word too large.  Truncated to core size. (F8FF)
   0000003E            00004 simb2 equ 0x3E ;код символа "2"
   0000007A            00005 simb3 equ 0x7A ;код символа "3"
   00000063            00006 simb4 equ 0x63 ;код символа "4"
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  2
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   0000                00025         extern pause_5s, pause_1s, pause_05s ;<pauses_20MHz.asm>
                       00026         ;подключение модуля распознавания данных выводимых весами на дисплей
   0000                00027         extern LCD_Data_Recognize ;<TM1621Recognize.asm>
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  3
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00039         lcall PrintMsg
                       00040         pagesel $
                       00041         ENDM
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  4
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00092         movlw S6
                       00093         movwf seg3_6
                       00094         movlw seg3_1            
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  5
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00048 ;5)установить запятую в позицию POS (1-16)
                       00049 ;SET_KOMA MACRO POS
                       00050 ;6)удалить запятую в позиции POS (1-16)
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  6
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0014   0B??           00032         decfsz bit_buffer,1
 0015   2???           00033         goto next_lcd_bit ;если нет идем обрабатывать следующий
 0016   0A??           00034         incf byte_buffer,1 ;если да переходим к следующему байту
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  7
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ Warning[207]: Found label after column 1. (SET_BANK0)
 0038   0009           00084         retfie
                       00069         include <TM1621ClrBuf.inc>  ;очистка указателей на буфер дисплея
                       00001 ;подготовка и очистка буфера перед записью
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  8
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0071   00??               M         movwf seg3_4
 0072   3020               M         movlw ' '
 0073   00??               M         movwf seg3_5
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE  9
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00BF   ???? ????          M         pagesel $
 00C1   ???? ???? 2??? 00095         lcall pause_1s
 00C4   ???? ????      00096         pagesel $
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 10
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0108   ???? ???? 2??? 00107         lcall pause_1s
 010B   ???? ????      00108         pagesel $
                       00109 
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 11
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0159   2???           00130         goto $
                       00131         
                       00132 ;Распознавание пришедших данных
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 12
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0178   1486           00040         bsf WR_IN
 0179   1506           00041         bsf DATA_IN
 017A   1283 1303      00042         banksel PORTA
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 13
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -724,7 +724,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 Message[303]: Program word too large.  Truncated to core size. (E0A2)
 Message[303]: Program word too large.  Truncated to core size. (F8FF)
 20A2 38FF             00145         end
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 14
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 14
 
 
 SYMBOL TABLE
@@ -783,7 +783,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 15
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 15
 
 
 SYMBOL TABLE
@@ -842,7 +842,7 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 16
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 16
 
 
 SYMBOL TABLE
@@ -901,7 +901,7 @@ I2C_START                         00000003
 I2C_STOP                          00000004
 INDF                              00000000
 INTCON                            0000000B
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 17
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 17
 
 
 SYMBOL TABLE
@@ -960,7 +960,7 @@ OSCCON                            0000008F
 OSCTUNE                           00000090
 OSFIE                             00000007
 OSFIF                             00000007
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 18
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 18
 
 
 SYMBOL TABLE
@@ -1019,7 +1019,7 @@ R                                 00000002
 RA0                               00000000
 RA1                               00000001
 RA2                               00000002
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 19
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 19
 
 
 SYMBOL TABLE
@@ -1078,7 +1078,7 @@ RX9                               00000006
 RX9D                              00000000
 R_NOT_W                           00000002
 R_W                               00000002
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 20
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 20
 
 
 SYMBOL TABLE
@@ -1137,7 +1137,7 @@ T1INSYNC                          00000002
 T1OSCEN                           00000003
 T1SYNC                            00000002
 T2CKPS0                           00000000
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 21
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 21
 
 
 SYMBOL TABLE
@@ -1196,7 +1196,7 @@ TRISD0                            00000000
 TRISD1                            00000001
 TRISD2                            00000002
 TRISD3                            00000003
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 22
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 22
 
 
 SYMBOL TABLE
@@ -1255,7 +1255,7 @@ WPUB2                             00000002
 WPUB3                             00000003
 WPUB4                             00000004
 WPUB5                             00000005
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 23
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 23
 
 
 SYMBOL TABLE
@@ -1314,7 +1314,7 @@ _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
 _CPD_ON                           00003F7F
 _CP_OFF                           00003FFF
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 24
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 24
 
 
 SYMBOL TABLE
@@ -1373,7 +1373,7 @@ _config2                          00002008
 bit_buffer                        00000013
 bufer_count                       00000012
 byte_buffer                       00000014
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 25
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 25
 
 
 SYMBOL TABLE
@@ -1432,7 +1432,7 @@ simbC                             0000001D
 simbE                             0000001F
 simbF                             00000017
 simbG                             0000005D
-MPASM  5.51                          SCPA.ASM   2-19-2018  12:24:25         PAGE 26
+MPASM  5.51                          SCPA.ASM   2-19-2018  16:43:32         PAGE 26
 
 
 SYMBOL TABLE

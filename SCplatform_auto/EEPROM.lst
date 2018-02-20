@@ -1,10 +1,10 @@
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  1
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00001         title "Блок пауз для 20МГц"
+                      00001         title "Блок для работы с ППЗУ"
                       00002         list p=16f887
                       00003         include <p16f887.inc>
                       00001         LIST
@@ -16,102 +16,66 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00007 ;==========================================================================
                       00008 
                       00809         LIST
-                      00004 
-                      00005         ;функции и переменные доступные извне
-  0000                00006         global pause_5s, pause_1s, pause_05s, pause_5us, pause_3us
-                      00007 
-                      00008         udata_ovr ;секция переменных
-0000                  00009 counta  res 1  
-0001                  00010 countb  res 1 
-0002                  00011 countc  res 1 
-0003                  00012 m5              res 1
-                      00013         code
-                      00014 ;-----------------------------------------------------------------------
-                      00015 ;пауза примерно 5с 
-0000                  00016 pause_5s
-0000   ???? ????      00017         banksel counta
-0002   3082           00018         movlw .130
-0003   00??           00019         movwf counta
-0004                  00020 cicle72
-0004   30FF           00021         movlw .255
-0005   00??           00022         movwf countb
-0006                  00023 cicle71 
-0006   30FF           00024         movlw .255
-0007   00??           00025         movwf countc
-0008                  00026 cicle70
-0008   0B??           00027         decfsz countc,1
-0009   2???           00028         goto cicle70
-000A   0B??           00029         decfsz countb,1
-000B   2???           00030         goto cicle71
-000C   0B??           00031         decfsz counta,1
-000D   2???           00032         goto cicle72
-000E   0008           00033         return
-                      00034 ;-----------------------------------------------------------------------
-                      00035 ;пауза примерно 1с 
-000F                  00036 pause_1s
-000F   ???? ????      00037         banksel counta
-0011   301A           00038         movlw .26
-0012   00??           00039         movwf counta
-0013                  00040 cicle82
-0013   30FF           00041         movlw .255
-0014   00??           00042         movwf countb
-0015                  00043 cicle81 
-0015   30FF           00044         movlw .255
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  2
-Блок пауз для 20МГц
+  0000                00004         global ee_read, ee_write
+                      00005 
+                      00006 
+                      00007         code
+                      00008 ;=======процедура чтения байта из EEPROM с адреса записанного в аккумуляторе======
+0000                  00009 ee_read
+0000   1283 1703      00010         banksel EEADR
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0002   008D           00011         movwf EEADR
+0003   1683 1703      00012         banksel EECON1  
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   140C           00013         bsf EECON1,RD ;инициализация чтения - адрес должен задаваться заранее
+0006   0000           00014         nop ;пауза чтоб успеть
+0007   0000           00015         nop
+0008   1283 1703      00016         banksel EEDATA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000A   080C           00017         movf EEDATA,0 ;сохраняем в аккумулятор считаные данные
+000B   0000           00018         nop
+000C   1303           00019         bcf STATUS,RP1;переход в 0й банк ;!!!!!
+000D   1283           00020         bcf STATUS,RP0;!!!!!
+                      00021 
+000E   0008           00022         RETURN
+                      00023 ;=== процедура записи байта в EEPROM записываемые данные находятся в аккумуляторе==
+                      00024 ;адрес ячейки для записи устанавливает до вызова процедуры
+000F                  00025 ee_write
+000F   1283 1703      00026         banksel EEDATA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0011   008C           00027         movwf EEDATA
+0012   1683 1703      00028         banksel EECON1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0014   150C           00029         bsf EECON1,WREN ;разрешаем запись - адрес должен задаваться заранее
+0015   3055           00030         movlw 0x55
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0016   008D           00031         movwf EECON2
+0017   30AA           00032         movlw 0xAA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0018   008D           00033         movwf EECON2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0019   148C           00034         bsf EECON1,WR ;начинаем запись
+001A   0000           00035         nop
+001B   0000           00036         nop
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  2
+Блок для работы с ППЗУ
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0016   00??           00045         movwf countc
-0017                  00046 cicle80
-0017   0B??           00047         decfsz countc,1
-0018   2???           00048         goto cicle80
-0019   0B??           00049         decfsz countb,1
-001A   2???           00050         goto cicle81
-001B   0B??           00051         decfsz counta,1
-001C   2???           00052         goto cicle82
-001D   0008           00053         return
-                      00054 ;-----------------------------------------------------------------------
-                      00055 ;пауза примерно 0,5с 
-001E                  00056 pause_05s
-001E   ???? ????      00057         banksel counta
-0020   300D           00058         movlw .13
-0021   00??           00059         movwf counta
-0022                  00060 cicle92
-0022   30FF           00061         movlw .255
-0023   00??           00062         movwf countb
-0024                  00063 cicle91 
-0024   30FF           00064         movlw .255
-0025   00??           00065         movwf countc
-0026                  00066 cicle90
-0026   0B??           00067         decfsz countc,1
-0027   2???           00068         goto cicle90
-0028   0B??           00069         decfsz countb,1
-0029   2???           00070         goto cicle91
-002A   0B??           00071         decfsz counta,1
-002B   2???           00072         goto cicle92
-002C   0008           00073         return
-                      00074 ;---------------------------------------------------------------------
-002D                  00075 pause_5us ;5us
-002D   3006           00076         movlw .6
-002E   00??           00077         movwf m5
-002F                  00078 pause_cicle5
-002F   0B??           00079         decfsz  m5,1
-0030   2???           00080         goto pause_cicle5
-0031   0008           00081         return
-                      00082 ;------------------------------Пауза 3 мкс 
-0032                  00083 pause_3us ;3us
-0032   3003           00084         movlw .3
-0033   00??           00085         movwf m5
-0034                  00086 pause_cicle3
-0034   0B??           00087         decfsz  m5,1
-0035   2???           00088         goto pause_cicle3
-0036   0008           00089         return
-                      00090 ;---------------------------------------------------------------------
-                      00091         end
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  3
-Блок пауз для 20МГц
+001C                  00037 wr
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001C   188C           00038         btfsc EECON1,WR ;ждем окончания записи
+001D   2???           00039         goto wr
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001E   110C           00040         bcf EECON1,WREN ;запрещаем запись
+001F   1303           00041         bcf STATUS,RP1;переход в 0й банк
+0020   1283           00042         bcf STATUS,RP0
+0021   0008           00043         RETURN
+                      00044 ;------------------------------------------------------------------------
+                      00045         end
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  3
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -169,8 +133,8 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  4
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  4
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -228,8 +192,8 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  5
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  5
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -287,8 +251,8 @@ INTF                              00000001
 IOCB                              00000096
 IOCB0                             00000000
 IOCB1                             00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  6
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  6
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -346,8 +310,8 @@ PDC0                              00000000
 PDC1                              00000001
 PDC2                              00000002
 PDC3                              00000003
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  7
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  7
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -405,8 +369,8 @@ RC2                               00000002
 RC3                               00000003
 RC4                               00000004
 RC5                               00000005
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  8
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  8
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -464,8 +428,8 @@ SSPCON2                           00000091
 SSPEN                             00000005
 SSPIE                             00000003
 SSPIF                             00000003
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE  9
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  9
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -523,8 +487,8 @@ TOUTPS3                           00000006
 TRISA                             00000085
 TRISA0                            00000000
 TRISA1                            00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE 10
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 10
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -582,8 +546,8 @@ TXIE                              00000004
 TXIF                              00000004
 TXREG                             00000019
 TXSTA                             00000098
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE 11
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 11
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -641,8 +605,8 @@ _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
 _CPD_ON                           00003F7F
 _CP_OFF                           00003FFF
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE 12
-Блок пауз для 20МГц
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 12
+Блок для работы с ППЗУ
 
 SYMBOL TABLE
   LABEL                             VALUE 
@@ -695,35 +659,18 @@ _WRT_OFF                          00003FFF
 _XT_OSC                           00003FF9
 __16F887                          00000001
 __DEBUG                           1
-cicle70                           00000008
-cicle71                           00000006
-cicle72                           00000004
-cicle80                           00000017
-cicle81                           00000015
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-19-2018  16:43:33         PAGE 13
-Блок пауз для 20МГц
+ee_read                           00000000
+ee_write                          0000000F
+wr                                0000001C
 
-SYMBOL TABLE
-  LABEL                             VALUE 
+MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 13
+Блок для работы с ППЗУ
 
-cicle82                           00000013
-cicle90                           00000026
-cicle91                           00000024
-cicle92                           00000022
-counta                            00000000
-countb                            00000001
-countc                            00000002
-m5                                00000003
-pause_05s                         0000001E
-pause_1s                          0000000F
-pause_3us                         00000032
-pause_5s                          00000000
-pause_5us                         0000002D
-pause_cicle3                      00000034
-pause_cicle5                      0000002F
+
+
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
-Messages :     0 reported,     0 suppressed
+Messages :    10 reported,     0 suppressed
 
 
