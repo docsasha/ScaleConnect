@@ -1,5 +1,5 @@
 Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\MCSETUP.INC 8 : Program word too large.  Truncated to core size. (E0A2)
 Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\MCSETUP.INC 22 : Program word too large.  Truncated to core size. (F8FF)
 Warning[207] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\TM1621CAPTURE.INC 83 : Found label after column 1. (SET_BANK0)
-Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\SCPA.ASM 145 : Program word too large.  Truncated to core size. (E0A2)
-Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\SCPA.ASM 145 : Program word too large.  Truncated to core size. (F8FF)
+Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\SCPA.ASM 172 : Program word too large.  Truncated to core size. (E0A2)
+Message[303] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\SCPA.ASM 172 : Program word too large.  Truncated to core size. (F8FF)

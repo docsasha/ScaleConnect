@@ -30,7 +30,9 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 	extern seg3_1,seg3_2,seg3_3,seg3_4,seg3_5,seg3_6;<TM1621Recognize.asm>
 	extern koma;<TM1621Recognize.asm>
 	;подключение модуля Tiny RTC - работа с часами DS1307
-
+	extern HH,MM,SS,WD,DD,MO,YY ;<RTCTime.asm>
+	extern ReadRTCData, ReadTime, ReadDate, ReadDayofWeek;<RTCTime.asm>
+	extern WriteRTC, WriteTime, WriteDate, WriteDayofWeek;<RTCTime.asm>
 	;подключение модуля Tiny RTC - работа с ППЗУ 24C32N	
 	
 
@@ -51,6 +53,15 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 ;CLR_KOMA MACRO POS  
 ;7)Напечатать символ SIMB в позиции POS
 ;PRINT_SIMB MACRO SIMB, POS
+	include <macroTinyRTC.inc>
+;1)макрос записи показателей времени из констант - данные записанны в формате BCD
+;WRITE_RTC MACRO HOURS, MINUTES, SECONDS, DAY_of_WEEK, DATE, MONTH, YEAR
+;2)макрос записи времени из констант - данные записанны в формате BCD
+;WRITE_TIME MACRO HOURS, MINUTES, SECONDS
+;3)макрос записи даты из констант - данные записанны в формате BCD
+;WRITE_DATE MACRO DATE, MONTH, YEAR
+;4)макрос записи дня недели из константы - данные записанны в формате BCD
+;WRITE_DAY_of_WEEK MACRO DAY_of_WEEK
 ;-----------------------------------------------------------------------
 
 ;пишем начальные значения ППЗУ
@@ -79,56 +90,72 @@ start
 	clrf koma
 	clrf koma+.1
 
-	PRINT_STR 'H','E','L','L','O',' ','F','O','r',' ',' ','A','L','L',' ',' '
+	PRINT_STR 't','1','n','n','E',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '
 	lcall pause_1s
 	pagesel $
 
-	SET_KOMA .1
-	lcall pause_1s
-	pagesel $
+	SET_KOMA .8
+	SET_KOMA .10
 
-	PRINT_STR_1 ' ','b','Y','E',' '
-	lcall pause_1s
-	pagesel $
-
-	SET_KOMA .2
-	lcall pause_1s
-	pagesel $
-
-	PRINT_STR_2 ' ','n','n','Y',' '
-	lcall pause_1s
-	pagesel $
-
-	SET_KOMA .3
-	lcall pause_1s
-	pagesel $
-
-	PRINT_STR_3 'F','r','1','E','n','d'
-	lcall pause_1s
-	pagesel $
-
-;	CLR_KOMA .5 
-;	lcall pause_1s
-;	pagesel $
-
-	PRINT_SIMB 'd', .6
-	lcall pause_1s
-	pagesel $
-	PRINT_SIMB 'E', .7
-	lcall pause_1s
-	pagesel $
-	PRINT_SIMB 'A', .8
-	lcall pause_1s
-	pagesel $
-	PRINT_SIMB 'r', .9
-	lcall pause_1s
-	pagesel $
-	PRINT_SIMB ' ', .10
-	lcall pause_1s
-	pagesel $
-	bsf INTCON,7
-	goto $
+	;пишем время в часы
+	WRITE_RTC 0x10, 0x45, 0x00,.3, 0x21, 0x02, 0x18
 	
+time_to_LCD
+	;читаем время из часов
+	lcall ReadRTCData
+	pagesel $
+	;выводим время в 3ю строку
+	banksel HH
+	swapf HH,0
+	andlw 0x0F
+	addlw 0x30
+	banksel seg3_1
+	movwf seg3_1
+
+	banksel HH
+	movf HH,0
+	andlw 0x0F
+	addlw 0x30	
+	banksel seg3_2
+	movwf seg3_2
+
+	banksel MM
+	swapf MM,0
+	andlw 0x0F
+	addlw 0x30
+	banksel seg3_3
+	movwf seg3_3
+
+	banksel MM
+	movf MM,0
+	andlw 0x0F
+	addlw 0x30	
+	banksel seg3_4
+	movwf seg3_4
+
+	banksel SS
+	swapf SS,0
+	andlw 0x0F
+	addlw 0x30
+	banksel seg3_5
+	movwf seg3_5
+
+	banksel SS
+	movf SS,0
+	andlw 0x0F
+	addlw 0x30	
+	banksel seg3_6
+	movwf seg3_6
+	
+	movlw seg3_1		
+	lcall PrintThirdStr
+	pagesel $
+
+	lcall pause_1s
+	pagesel $
+;	bsf INTCON,7
+	goto time_to_LCD
+
 ;Распознавание пришедших данных
 
 ;Определяем превышен ли минимальный вес реакции

@@ -1,4 +1,4 @@
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  1
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 0019   148C           00034         bsf EECON1,WR ;начинаем запись
 001A   0000           00035         nop
 001B   0000           00036         nop
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  2
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  2
 Блок для работы с ППЗУ
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -74,7 +74,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 0021   0008           00043         RETURN
                       00044 ;------------------------------------------------------------------------
                       00045         end
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  3
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  3
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -133,7 +133,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  4
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  4
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -192,7 +192,7 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  5
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  5
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -251,7 +251,7 @@ INTF                              00000001
 IOCB                              00000096
 IOCB0                             00000000
 IOCB1                             00000001
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  6
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  6
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -310,7 +310,7 @@ PDC0                              00000000
 PDC1                              00000001
 PDC2                              00000002
 PDC3                              00000003
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  7
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  7
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -369,7 +369,7 @@ RC2                               00000002
 RC3                               00000003
 RC4                               00000004
 RC5                               00000005
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  8
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  8
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -428,7 +428,7 @@ SSPCON2                           00000091
 SSPEN                             00000005
 SSPIE                             00000003
 SSPIF                             00000003
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE  9
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE  9
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -487,7 +487,7 @@ TOUTPS3                           00000006
 TRISA                             00000085
 TRISA0                            00000000
 TRISA1                            00000001
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 10
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE 10
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -546,7 +546,7 @@ TXIE                              00000004
 TXIF                              00000004
 TXREG                             00000019
 TXSTA                             00000098
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 11
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE 11
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -605,7 +605,7 @@ _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
 _CPD_ON                           00003F7F
 _CP_OFF                           00003FFF
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 12
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE 12
 Блок для работы с ППЗУ
 
 SYMBOL TABLE
@@ -663,7 +663,7 @@ ee_read                           00000000
 ee_write                          0000000F
 wr                                0000001C
 
-MPASM  5.51                        EEPROM.ASM   2-19-2018  16:43:40         PAGE 13
+MPASM  5.51                        EEPROM.ASM   2-21-2018  11:21:36         PAGE 13
 Блок для работы с ППЗУ
 
 

@@ -10,7 +10,6 @@
 	global HH,MM,SS,WD,DD,MO,YY
 	global ReadRTCData, ReadTime, ReadDate, ReadDayofWeek
 	global WriteRTC, WriteTime, WriteDate, WriteDayofWeek
-	global read_time, write_time ;!!!!убрать после проверки основных функций
 
 	udata
 HH	res .1 ;часы
@@ -69,10 +68,9 @@ ReadRTCData
 	banksel SS
 	movlw	b'11010000' ;0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x00			; set word address to seconds register
 	call	write_RTC
 	RTC_START
-	banksel SS
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
@@ -106,10 +104,9 @@ ReadTime
 	banksel SS
 	movlw	b'11010000' ;0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x00			; set word address to seconds register
 	call	write_RTC
 	RTC_START
-	banksel SS
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
@@ -131,21 +128,13 @@ ReadDate
 	banksel SS
 	movlw	b'11010000' ;0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x04			; адрес регистра с датой
 	call	write_RTC
 	RTC_START
-	banksel SS
+	banksel DD
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
-	call	ack;
-	call	read_RTC		; and so on
-	call	ack;
-	call	read_RTC
-	call	ack;
-	call	read_RTC
-	call	ack;
-	call	read_RTC
 	movwf	DD
 	call	ack;
 	call	read_RTC
@@ -164,19 +153,13 @@ ReadDayofWeek
 	banksel SS
 	movlw	b'11010000' ;0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x03			; адрес регистра с днем недели
 	call	write_RTC
 	RTC_START
 	banksel SS
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
-	call	ack;
-	call	read_RTC		; and so on
-	call	ack;
-	call	read_RTC
-	call	ack;
-	call	read_RTC
 	movwf	WD
 	call	nack;
 	RTC_STOP
@@ -186,31 +169,29 @@ ReadDayofWeek
 ;WriteRTC(HH,MM,SS,DW,DD,MO,YY)
 WriteRTC
 	RTC_START
-	banksel SS
 	movlw	b'11010000';0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x00			; set word address to seconds register
 	call	write_RTC
 	banksel SS
 	movf	SS,0 ;секунды
 	call	write_RTC
-	banksel SS
+	banksel MM
 	movf 	MM,0 ;минуты
 	call	write_RTC
-	banksel SS
+	banksel HH
 	movf	HH,0 ;часы
 	call	write_RTC
-	banksel SS
+	banksel WD
 	movf	WD,0 ;день недели
 	call	write_RTC
-	banksel SS
+	banksel DD
 	movf	DD,0 ;число
-	banksel SS
 	call	write_RTC
-	banksel SS
+	banksel MO
 	movf	MO,0 ;месяц
 	call	write_RTC
-	banksel SS
+	banksel YY
 	movf	YY,0 ;год
 	call	write_RTC
 	RTC_STOP
@@ -223,15 +204,15 @@ WriteTime
 	banksel SS
 	movlw	b'11010000';0D0h			; slave address + write
 	call	write_RTC
-	movlw	0			; set word address to seconds register
+	movlw	0x00			; set word address to seconds register
 	call	write_RTC
 	banksel SS
 	movf	SS,0 ;секунды
 	call	write_RTC
-	banksel SS
+	banksel MM
 	movf 	MM,0 ;минуты
 	call	write_RTC
-	banksel SS
+	banksel HH
 	movf	HH,0 ;часы
 	call	write_RTC
 	RTC_STOP
@@ -246,14 +227,13 @@ WriteDate
 	call	write_RTC
 	movlw	0x04			; адрес регистра с датой
 	call	write_RTC
-	banksel SS
+	banksel DD
 	movf	DD,0 ;число
-	banksel SS
 	call	write_RTC
-	banksel SS
+	banksel MO
 	movf	MO,0 ;месяц
 	call	write_RTC
-	banksel SS
+	banksel YY
 	movf	YY,0 ;год
 	call	write_RTC
 	RTC_STOP
@@ -270,74 +250,6 @@ WriteDayofWeek
 	call	write_RTC
 	banksel WD
 	movf	WD,0 ;день недели
-	call	write_RTC
-	RTC_STOP
-	return
-;-----------------------------------------------------------------------
-read_time ;чтение текущего времени из часов реального времени
-	RTC_START
-	banksel SS
-	movlw	b'11010000' ;0D0h			; slave address + write
-	call	write_RTC
-	movlw	0			; set word address to seconds register
-	call	write_RTC
-	RTC_START
-	banksel SS
-	movlw	b'11010001';0D1h			; slave address + read
-	call	write_RTC
-	call	read_RTC		; read the seconds data
-	movwf	SS			; save it
-	call	ack;
-	call	read_RTC		; and so on
-	movwf	MM
-	call	ack;
-	call	read_RTC
-	movwf	HH
-	call	ack;
-	call	read_RTC
-	movwf	WD
-	call	ack;
-	call	read_RTC
-	movwf	DD
-	call	ack;
-	call	read_RTC
-	movwf	MO
-	call	ack;
-	call	read_RTC
-	movwf	YY
-	call	nack;
-	RTC_STOP
-	return
-;-----------------------------------------------------------------------
-write_time ;запись времени в часы реального времени 
-;записываются константы, поэтому перед использование нужно их правильно установить
-	RTC_START
-	banksel SS
-	movlw	b'11010000';0D0h			; slave address + write
-	call	write_RTC
-	movlw	0			; set word address to seconds register
-	call	write_RTC
-	banksel SS
-	movf	SS,0 ;секунды
-	call	write_RTC
-	banksel SS
-	movf 	MM,0 ;минуты
-	call	write_RTC
-	banksel SS
-	movf	HH,0 ;часы
-	call	write_RTC
-	banksel SS
-	movf	WD,0 ;день недели
-	call	write_RTC
-	banksel SS
-	movf	DD,0 ;число
-	banksel SS
-	call	write_RTC
-	banksel SS
-	movf	MO,0 ;месяц
-	call	write_RTC
-	banksel SS
-	movf	YY,0 ;год
 	call	write_RTC
 	RTC_STOP
 	return
@@ -371,6 +283,7 @@ cont_I2C_r
 	banksel COUNT
 	decfsz	COUNT, 1
 	goto	I2C_read_loop
+	banksel TMP
 	movf	TMP, W
 	return
 set_TMP

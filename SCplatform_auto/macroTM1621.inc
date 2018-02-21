@@ -125,7 +125,7 @@ CLR_KOMA MACRO POS
 	ENDM
 ;-----------------------------------------------------------------------
 ;Напечатать символ SIMB в позиции POS
-PRINT_SIMB MACRO SIMB, POS
+PRINT_SIMB MACRO SIMB, POS ;POS 1..16
 	banksel simb_pos
 	movlw POS
 	movwf simb_pos
