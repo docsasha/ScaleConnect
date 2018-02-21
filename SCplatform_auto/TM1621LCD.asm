@@ -193,8 +193,7 @@ nextASCII
 	decfsz counter,1
 	goto nextASCII
 
-	movf buf_temp,0
-	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+	movf buf_temp,0 ;сейчас здесь адрес позиций запятых 
 	call koma_set ;расставляем запятые
 	
 	movf simb_temp,0
@@ -456,7 +455,7 @@ nextASCII_1
 	goto nextASCII_1
 
 	movf buf_temp,0
-	addlw .16 ;адрес позиций запятых (начиная с 17й позиции)
+	addlw .11 ;адрес позиций запятых
 	call koma_set ;расставляем запятые
 
 	movf simb_temp,0
@@ -500,7 +499,7 @@ nextASCII_2
 	goto nextASCII_2
 
 	movf buf_temp,0
-	addlw .11 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+	addlw .6 ;адрес позиций запятых 
 	call koma_set ;расставляем запятые
 
 	movf simb_temp,0
@@ -542,8 +541,7 @@ nextASCII_3
 	decfsz counter,1
 	goto nextASCII_3
 
-	movf buf_temp,0
-	addlw .6 ;адрес позиций запятых (начиная с 17й позиции относительно seg1_1)
+	movf buf_temp,0 ;адрес позиций запятых
 	call koma_set ;расставляем запятые
 
 	movf simb_temp,0

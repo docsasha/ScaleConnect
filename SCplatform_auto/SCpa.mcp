@@ -38,6 +38,7 @@ file_010=.
 file_011=.
 file_012=.
 file_013=.
+file_014=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -53,6 +54,7 @@ file_010=no
 file_011=no
 file_012=no
 file_013=no
+file_014=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -68,6 +70,7 @@ file_010=no
 file_011=no
 file_012=no
 file_013=no
+file_014=no
 [FILE_INFO]
 file_000=SCpa.asm
 file_001=pauses_20MHz.asm
@@ -75,14 +78,15 @@ file_002=TM1621Recognize.asm
 file_003=TM1621LCD.asm
 file_004=RTCTime.asm
 file_005=EEPROM.asm
-file_006=TM1621.inc
-file_007=TM1621Setup.inc
-file_008=TM1621Capture.inc
-file_009=MCSetup.inc
-file_010=InitMC.inc
-file_011=TM1621ClrBuf.inc
-file_012=macroTM1621.inc
-file_013=macroTinyRTC.inc
+file_006=RTCEEPROM.asm
+file_007=TM1621.inc
+file_008=TM1621Setup.inc
+file_009=TM1621Capture.inc
+file_010=MCSetup.inc
+file_011=InitMC.inc
+file_012=TM1621ClrBuf.inc
+file_013=macroTM1621.inc
+file_014=macroTinyRTC.inc
 [SUITE_INFO]
 suite_guid={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 suite_state=generate-relocatable-code

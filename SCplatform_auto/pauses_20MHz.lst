@@ -1,4 +1,4 @@
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  1
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0014   00??           00042         movwf countb
 0015                  00043 cicle81 
 0015   30FF           00044         movlw .255
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  2
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  2
 Ѕлок пауз дл€ 20ћ√ц
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -110,7 +110,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0036   0008           00089         return
                       00090 ;---------------------------------------------------------------------
                       00091         end
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  3
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  3
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -169,7 +169,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  4
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  4
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -228,7 +228,7 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  5
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  5
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -287,7 +287,7 @@ INTF                              00000001
 IOCB                              00000096
 IOCB0                             00000000
 IOCB1                             00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  6
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  6
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -346,7 +346,7 @@ PDC0                              00000000
 PDC1                              00000001
 PDC2                              00000002
 PDC3                              00000003
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  7
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  7
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -405,7 +405,7 @@ RC2                               00000002
 RC3                               00000003
 RC4                               00000004
 RC5                               00000005
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  8
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  8
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -464,7 +464,7 @@ SSPCON2                           00000091
 SSPEN                             00000005
 SSPIE                             00000003
 SSPIF                             00000003
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE  9
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE  9
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -523,7 +523,7 @@ TOUTPS3                           00000006
 TRISA                             00000085
 TRISA0                            00000000
 TRISA1                            00000001
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE 10
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE 10
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -582,7 +582,7 @@ TXIE                              00000004
 TXIF                              00000004
 TXREG                             00000019
 TXSTA                             00000098
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE 11
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE 11
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -641,7 +641,7 @@ _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
 _CPD_ON                           00003F7F
 _CP_OFF                           00003FFF
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE 12
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE 12
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE
@@ -700,7 +700,7 @@ cicle71                           00000006
 cicle72                           00000004
 cicle80                           00000017
 cicle81                           00000015
-MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  11:21:29         PAGE 13
+MPASM  5.51                  PAUSES_20MHZ.ASM   2-21-2018  16:35:38         PAGE 13
 Ѕлок пауз дл€ 20ћ√ц
 
 SYMBOL TABLE

@@ -134,3 +134,13 @@ PRINT_SIMB MACRO SIMB, POS ;POS 1..16
 	pagesel $
 	ENDM
 ;----------------------------------------------------------------------
+;Ќапечатать значение переменной VAL в позиции POS
+PRINT_VAL MACRO VAL, POS ;POS 1..16
+	banksel simb_pos
+	movlw POS
+	movwf simb_pos
+	banksel VAL
+	movf VAL,0	
+	lcall PrintSimb
+	pagesel $
+	ENDM

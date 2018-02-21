@@ -14,6 +14,8 @@ LCD_bufer 	res .18 ;адрес ячейки начиная с которой располагается буфер
 bufer_count	res .1 ;счетчик общего количества принятых бит (должен распологаться сразу после буфера)
 bit_buffer	res .1 ;счетчик бит при захвате с дисплея
 byte_buffer	res .1 ;счетчик байт при захвате с дисплея
+;вспомогательные переменные
+loop_cnt	res .1 ;счетчик цикла
 ;-----------------------------------------
 ;подключаем внешние программные модули
 	;подключение модуля вывода на дисплей
@@ -34,7 +36,10 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 	extern ReadRTCData, ReadTime, ReadDate, ReadDayofWeek;<RTCTime.asm>
 	extern WriteRTC, WriteTime, WriteDate, WriteDayofWeek;<RTCTime.asm>
 	;подключение модуля Tiny RTC - работа с ППЗУ 24C32N	
-	
+	extern MEM_ADDR_H, MEM_ADDR_L, MEM_LEN, R_BUFFER;<RTCEEPROM.asm>
+	extern WriteADDR, WriteBlock, ReadADDR, ReadBlock	;<RTCEEPROM.asm>
+	;подключение модуля работы с встроенным ППЗУ
+	extern ee_read, ee_write ;<EEPROM.asm>
 
 ;-----------------------------------------------------------------------
 ;макросы
@@ -53,6 +58,8 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 ;CLR_KOMA MACRO POS  
 ;7)Напечатать символ SIMB в позиции POS
 ;PRINT_SIMB MACRO SIMB, POS
+;8)Напечатать значение переменной VAL в позиции POS
+;PRINT_VAL MACRO VAL, POS ;POS 1..16
 	include <macroTinyRTC.inc>
 ;1)макрос записи показателей времени из констант - данные записанны в формате BCD
 ;WRITE_RTC MACRO HOURS, MINUTES, SECONDS, DAY_of_WEEK, DATE, MONTH, YEAR
@@ -62,10 +69,29 @@ byte_buffer	res .1 ;счетчик байт при захвате с дисплея
 ;WRITE_DATE MACRO DATE, MONTH, YEAR
 ;4)макрос записи дня недели из константы - данные записанны в формате BCD
 ;WRITE_DAY_of_WEEK MACRO DAY_of_WEEK
+;5)макрос вывода в третью строку текущего времени (переменные HH,MM,SS)
+;TIME_to_3STR MACRO
+;6)макрос вывода во вторую строку текущей даты (переменные DD,MO)
+;DATE_to_2STR MACRO
+;7)макрос вывода во вторую строку текущего года 20ХХ (переменная YY)
+;YEAR_to_2STR MACRO
+;8)макрос вывода в 1ю строку текущего дня недели (переменная WD)
+;DW_to_1STR MACRO
+;9)макрос записи показателей времени из ППЗУ начиная с адреса TIMEADDR - данные записанны в формате BCD
+;WRITE_RTC_EE MACRO TIMEADDR
 ;-----------------------------------------------------------------------
 
 ;пишем начальные значения ППЗУ
+	Org 0x2100;пишем в ППЗУ (по адресу 0x00) выставляемое в модуль часов время
+	DE 0x16 ;часы
+	DE 0x45 ;минуты
+	DE 0x00 ;секунды
+	DE .3  ;день недели
+	DE 0x21 ;число
+	DE 0x02 ;месяц
+	DE 0x18 ;год 
 
+;основной блок программы
 	org 0x0000
 	goto start
 	org 0x0004 ;вектор прерываний
@@ -90,66 +116,20 @@ start
 	clrf koma
 	clrf koma+.1
 
-	PRINT_STR 't','1','n','n','E',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '
-	lcall pause_1s
-	pagesel $
-
-	SET_KOMA .8
-	SET_KOMA .10
-
 	;пишем время в часы
-	WRITE_RTC 0x10, 0x45, 0x00,.3, 0x21, 0x02, 0x18
+	WRITE_RTC_EE 0x00
+	;WRITE_RTC 0x12, 0x10, 0x00,.3, 0x21, 0x02, 0x18
 	
 time_to_LCD
-	;читаем время из часов
-	lcall ReadRTCData
+	;читаем время и дату из часов
+	lcall ReadTime
 	pagesel $
+	;выводим день недели в 1ю строку
+	DW_to_1STR 
+	;выводим дату во 2ю строку
+	DATE_to_2STR
 	;выводим время в 3ю строку
-	banksel HH
-	swapf HH,0
-	andlw 0x0F
-	addlw 0x30
-	banksel seg3_1
-	movwf seg3_1
-
-	banksel HH
-	movf HH,0
-	andlw 0x0F
-	addlw 0x30	
-	banksel seg3_2
-	movwf seg3_2
-
-	banksel MM
-	swapf MM,0
-	andlw 0x0F
-	addlw 0x30
-	banksel seg3_3
-	movwf seg3_3
-
-	banksel MM
-	movf MM,0
-	andlw 0x0F
-	addlw 0x30	
-	banksel seg3_4
-	movwf seg3_4
-
-	banksel SS
-	swapf SS,0
-	andlw 0x0F
-	addlw 0x30
-	banksel seg3_5
-	movwf seg3_5
-
-	banksel SS
-	movf SS,0
-	andlw 0x0F
-	addlw 0x30	
-	banksel seg3_6
-	movwf seg3_6
-	
-	movlw seg3_1		
-	lcall PrintThirdStr
-	pagesel $
+	TIME_to_3STR
 
 	lcall pause_1s
 	pagesel $
