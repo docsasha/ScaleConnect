@@ -1,0 +1,1482 @@
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;блок работы с модулем RTC DS1307 - функции часов
+                      00002         list p=16f887
+                      00003         include <p16f887.inc>
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F887 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00809         LIST
+                      00004 
+                      00005         #define SCL     PORTA,2         ; SCL RTC
+                      00006         #define SDA     PORTA,3         ; SDA RTC
+                      00007         #define TRIS_SCL        TRISA,2         ; направление SCL RTC
+                      00008         #define TRIS_SDA        TRISA,3         ; направление SDA RTC
+                      00009 
+  0000                00010         global HH,MM,SS,WD,DD,MO,YY
+  0000                00011         global ReadRTCData, ReadTime, ReadDate, ReadDayofWeek
+  0000                00012         global WriteRTC, WriteTime, WriteDate, WriteDayofWeek
+                      00013 
+                      00014         udata
+0000                  00015 HH      res .1 ;часы
+0001                  00016 MM      res .1 ;минуты
+0002                  00017 SS      res .1 ;секунды
+0003                  00018 WD      res .1 ;день недели
+0004                  00019 DD      res .1 ;число
+0005                  00020 MO      res .1 ;месяц
+0006                  00021 YY      res .1 ;год
+                      00022         udata_ovr
+0000                  00023 TMP res .1
+0001                  00024 COUNT res .1
+                      00025 
+                      00026 ;макросы
+                      00027 ;-----------------------------------------------------------------
+                      00028 ;установка банка 0
+                      00029 SET_BANK0 MACRO 
+                      00030         bcf STATUS, RP0
+                      00031         bcf STATUS, RP1 
+                      00032         ENDM
+                      00033 ;-----------------------------------------------------------------
+                      00034 ;установка банка 1
+                      00035 SET_BANK1 MACRO 
+                      00036         bsf STATUS, RP0
+                      00037         bcf STATUS, RP1 
+                      00038         ENDM
+                      00039 ;------------------------------------------------------------------
+                      00040 RTC_START MACRO ;!!!!!команда старт для часов реального времени
+                      00041         SET_BANK0
+                      00042         bsf     SDA                     ; SDA high
+                      00043         nop
+                      00044         SET_BANK1
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00045         bsf     TRIS_SCL                ; SCL high (input)
+                      00046         SET_BANK0
+                      00047         bcf     SDA                     ; SDA low (start)
+                      00048         ENDM
+                      00049         ;-------------------
+                      00050 RTC_STOP MACRO                  ;!!!!команда стоп для часов реального времени
+                      00051         SET_BANK0
+                      00052         bcf     SDA                     ; SDA low
+                      00053         nop
+                      00054         nop
+                      00055         SET_BANK1
+                      00056         bsf     TRIS_SCL                ; SCL high (input)
+                      00057         SET_BANK0
+                      00058         bsf     SDA                     ; SDA high
+                      00059         ENDM
+                      00060 ;------------------------------------------------------------------
+                      00061 
+                      00062         code
+                      00063 ;-----------------------------------------------------------------------
+                      00064 ;- Считать текущее состояние времени/даты/для недели и т.д.
+                      00065 ;ReadRTCData(HH,MM,SS,WD,DD,MO,YY)
+0000                  00066 ReadRTCData
+                      00067         RTC_START
+                          M         SET_BANK0
+0000   1283               M         bcf STATUS, RP0
+0001   1303               M         bcf STATUS, RP1 
+0002   1585               M         bsf     SDA                     ; SDA high
+0003   0000               M         nop
+                          M         SET_BANK1
+0004   1683               M         bsf STATUS, RP0
+0005   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0006   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0007   1283               M         bcf STATUS, RP0
+0008   1303               M         bcf STATUS, RP1 
+0009   1185               M         bcf     SDA                     ; SDA low (start)
+000A   ???? ????      00068         banksel SS
+000C   30D0           00069         movlw   b'11010000' ;0D0h                       ; slave address + write
+000D   2???           00070         call    write_RTC
+000E   3000           00071         movlw   0x00                    ; set word address to seconds register
+000F   2???           00072         call    write_RTC
+                      00073         RTC_START
+                          M         SET_BANK0
+0010   1283               M         bcf STATUS, RP0
+0011   1303               M         bcf STATUS, RP1 
+0012   1585               M         bsf     SDA                     ; SDA high
+0013   0000               M         nop
+                          M         SET_BANK1
+0014   1683               M         bsf STATUS, RP0
+0015   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0016   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M         SET_BANK0
+0017   1283               M         bcf STATUS, RP0
+0018   1303               M         bcf STATUS, RP1 
+0019   1185               M         bcf     SDA                     ; SDA low (start)
+001A   30D1           00074         movlw   b'11010001';0D1h                        ; slave address + read
+001B   2???           00075         call    write_RTC
+001C   2???           00076         call    read_RTC                ; read the seconds data
+001D   00??           00077         movwf   SS                      ; save it
+001E   2???           00078         call    ack;
+001F   2???           00079         call    read_RTC                ; and so on
+0020   00??           00080         movwf   MM
+0021   2???           00081         call    ack;
+0022   2???           00082         call    read_RTC
+0023   00??           00083         movwf   HH
+0024   2???           00084         call    ack;
+0025   2???           00085         call    read_RTC
+0026   00??           00086         movwf   WD
+0027   2???           00087         call    ack;
+0028   2???           00088         call    read_RTC
+0029   00??           00089         movwf   DD
+002A   2???           00090         call    ack;
+002B   2???           00091         call    read_RTC
+002C   00??           00092         movwf   MO
+002D   2???           00093         call    ack;
+002E   2???           00094         call    read_RTC
+002F   00??           00095         movwf   YY
+0030   2???           00096         call    nack;
+                      00097         RTC_STOP
+                          M         SET_BANK0
+0031   1283               M         bcf STATUS, RP0
+0032   1303               M         bcf STATUS, RP1 
+0033   1185               M         bcf     SDA                     ; SDA low
+0034   0000               M         nop
+0035   0000               M         nop
+                          M         SET_BANK1
+0036   1683               M         bsf STATUS, RP0
+0037   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0038   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0039   1283               M         bcf STATUS, RP0
+003A   1303               M         bcf STATUS, RP1 
+003B   1585               M         bsf     SDA                     ; SDA high
+003C   0008           00098         return
+                      00099 ;-----------------------------------------------------------------------
+                      00100 ;- Считать отдельно значение времени
+                      00101 ;ReadTime(HH,MM,SS)
+003D                  00102 ReadTime
+                      00103         RTC_START
+                          M         SET_BANK0
+003D   1283               M         bcf STATUS, RP0
+003E   1303               M         bcf STATUS, RP1 
+003F   1585               M         bsf     SDA                     ; SDA high
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0040   0000               M         nop
+                          M         SET_BANK1
+0041   1683               M         bsf STATUS, RP0
+0042   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0043   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0044   1283               M         bcf STATUS, RP0
+0045   1303               M         bcf STATUS, RP1 
+0046   1185               M         bcf     SDA                     ; SDA low (start)
+0047   ???? ????      00104         banksel SS
+0049   30D0           00105         movlw   b'11010000' ;0D0h                       ; slave address + write
+004A   2???           00106         call    write_RTC
+004B   3000           00107         movlw   0x00                    ; set word address to seconds register
+004C   2???           00108         call    write_RTC
+                      00109         RTC_START
+                          M         SET_BANK0
+004D   1283               M         bcf STATUS, RP0
+004E   1303               M         bcf STATUS, RP1 
+004F   1585               M         bsf     SDA                     ; SDA high
+0050   0000               M         nop
+                          M         SET_BANK1
+0051   1683               M         bsf STATUS, RP0
+0052   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0053   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0054   1283               M         bcf STATUS, RP0
+0055   1303               M         bcf STATUS, RP1 
+0056   1185               M         bcf     SDA                     ; SDA low (start)
+0057   30D1           00110         movlw   b'11010001';0D1h                        ; slave address + read
+0058   2???           00111         call    write_RTC
+0059   2???           00112         call    read_RTC                ; read the seconds data
+005A   00??           00113         movwf   SS                      ; save it
+005B   2???           00114         call    ack;
+005C   2???           00115         call    read_RTC                ; and so on
+005D   00??           00116         movwf   MM
+005E   2???           00117         call    ack;
+005F   2???           00118         call    read_RTC
+0060   00??           00119         movwf   HH
+0061   2???           00120         call    nack;
+                      00121         RTC_STOP
+                          M         SET_BANK0
+0062   1283               M         bcf STATUS, RP0
+0063   1303               M         bcf STATUS, RP1 
+0064   1185               M         bcf     SDA                     ; SDA low
+0065   0000               M         nop
+0066   0000               M         nop
+                          M         SET_BANK1
+0067   1683               M         bsf STATUS, RP0
+0068   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0069   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M         SET_BANK0
+006A   1283               M         bcf STATUS, RP0
+006B   1303               M         bcf STATUS, RP1 
+006C   1585               M         bsf     SDA                     ; SDA high
+006D   0008           00122         return
+                      00123 ;-----------------------------------------------------------------------
+                      00124 ;- Считать отдельно дату
+                      00125 ;ReadDate(DD,MO,YY)
+006E                  00126 ReadDate
+                      00127         RTC_START
+                          M         SET_BANK0
+006E   1283               M         bcf STATUS, RP0
+006F   1303               M         bcf STATUS, RP1 
+0070   1585               M         bsf     SDA                     ; SDA high
+0071   0000               M         nop
+                          M         SET_BANK1
+0072   1683               M         bsf STATUS, RP0
+0073   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0074   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0075   1283               M         bcf STATUS, RP0
+0076   1303               M         bcf STATUS, RP1 
+0077   1185               M         bcf     SDA                     ; SDA low (start)
+0078   ???? ????      00128         banksel SS
+007A   30D0           00129         movlw   b'11010000' ;0D0h                       ; slave address + write
+007B   2???           00130         call    write_RTC
+007C   3004           00131         movlw   0x04                    ; адрес регистра с датой
+007D   2???           00132         call    write_RTC
+                      00133         RTC_START
+                          M         SET_BANK0
+007E   1283               M         bcf STATUS, RP0
+007F   1303               M         bcf STATUS, RP1 
+0080   1585               M         bsf     SDA                     ; SDA high
+0081   0000               M         nop
+                          M         SET_BANK1
+0082   1683               M         bsf STATUS, RP0
+0083   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0084   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0085   1283               M         bcf STATUS, RP0
+0086   1303               M         bcf STATUS, RP1 
+0087   1185               M         bcf     SDA                     ; SDA low (start)
+0088   ???? ????      00134         banksel DD
+008A   30D1           00135         movlw   b'11010001';0D1h                        ; slave address + read
+008B   2???           00136         call    write_RTC
+008C   2???           00137         call    read_RTC                ; read the seconds data
+008D   00??           00138         movwf   DD
+008E   2???           00139         call    ack;
+008F   2???           00140         call    read_RTC
+0090   00??           00141         movwf   MO
+0091   2???           00142         call    ack;
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0092   2???           00143         call    read_RTC
+0093   00??           00144         movwf   YY
+0094   2???           00145         call    nack;
+                      00146         RTC_STOP
+                          M         SET_BANK0
+0095   1283               M         bcf STATUS, RP0
+0096   1303               M         bcf STATUS, RP1 
+0097   1185               M         bcf     SDA                     ; SDA low
+0098   0000               M         nop
+0099   0000               M         nop
+                          M         SET_BANK1
+009A   1683               M         bsf STATUS, RP0
+009B   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+009C   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+009D   1283               M         bcf STATUS, RP0
+009E   1303               M         bcf STATUS, RP1 
+009F   1585               M         bsf     SDA                     ; SDA high
+00A0   0008           00147         return
+                      00148 ;-----------------------------------------------------------------------
+                      00149 ;- Считать отдельно день недели
+                      00150 ;ReadDayofWeek(DW)
+00A1                  00151 ReadDayofWeek
+                      00152         RTC_START
+                          M         SET_BANK0
+00A1   1283               M         bcf STATUS, RP0
+00A2   1303               M         bcf STATUS, RP1 
+00A3   1585               M         bsf     SDA                     ; SDA high
+00A4   0000               M         nop
+                          M         SET_BANK1
+00A5   1683               M         bsf STATUS, RP0
+00A6   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00A7   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+00A8   1283               M         bcf STATUS, RP0
+00A9   1303               M         bcf STATUS, RP1 
+00AA   1185               M         bcf     SDA                     ; SDA low (start)
+00AB   ???? ????      00153         banksel SS
+00AD   30D0           00154         movlw   b'11010000' ;0D0h                       ; slave address + write
+00AE   2???           00155         call    write_RTC
+00AF   3003           00156         movlw   0x03                    ; адрес регистра с днем недели
+00B0   2???           00157         call    write_RTC
+                      00158         RTC_START
+                          M         SET_BANK0
+00B1   1283               M         bcf STATUS, RP0
+00B2   1303               M         bcf STATUS, RP1 
+00B3   1585               M         bsf     SDA                     ; SDA high
+00B4   0000               M         nop
+                          M         SET_BANK1
+00B5   1683               M         bsf STATUS, RP0
+00B6   1303               M         bcf STATUS, RP1 
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00B7   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+00B8   1283               M         bcf STATUS, RP0
+00B9   1303               M         bcf STATUS, RP1 
+00BA   1185               M         bcf     SDA                     ; SDA low (start)
+00BB   ???? ????      00159         banksel SS
+00BD   30D1           00160         movlw   b'11010001';0D1h                        ; slave address + read
+00BE   2???           00161         call    write_RTC
+00BF   2???           00162         call    read_RTC                ; read the seconds data
+00C0   00??           00163         movwf   WD
+00C1   2???           00164         call    nack;
+                      00165         RTC_STOP
+                          M         SET_BANK0
+00C2   1283               M         bcf STATUS, RP0
+00C3   1303               M         bcf STATUS, RP1 
+00C4   1185               M         bcf     SDA                     ; SDA low
+00C5   0000               M         nop
+00C6   0000               M         nop
+                          M         SET_BANK1
+00C7   1683               M         bsf STATUS, RP0
+00C8   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00C9   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+00CA   1283               M         bcf STATUS, RP0
+00CB   1303               M         bcf STATUS, RP1 
+00CC   1585               M         bsf     SDA                     ; SDA high
+00CD   0008           00166         return
+                      00167 ;-----------------------------------------------------------------------
+                      00168 ;- Установить все временные параметры
+                      00169 ;WriteRTC(HH,MM,SS,DW,DD,MO,YY)
+00CE                  00170 WriteRTC
+                      00171         RTC_START
+                          M         SET_BANK0
+00CE   1283               M         bcf STATUS, RP0
+00CF   1303               M         bcf STATUS, RP1 
+00D0   1585               M         bsf     SDA                     ; SDA high
+00D1   0000               M         nop
+                          M         SET_BANK1
+00D2   1683               M         bsf STATUS, RP0
+00D3   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00D4   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+00D5   1283               M         bcf STATUS, RP0
+00D6   1303               M         bcf STATUS, RP1 
+00D7   1185               M         bcf     SDA                     ; SDA low (start)
+00D8   30D0           00172         movlw   b'11010000';0D0h                        ; slave address + write
+00D9   2???           00173         call    write_RTC
+00DA   3000           00174         movlw   0x00                    ; set word address to seconds register
+00DB   2???           00175         call    write_RTC
+00DC   ???? ????      00176         banksel SS
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00DE   08??           00177         movf    SS,0 ;секунды
+00DF   2???           00178         call    write_RTC
+00E0   ???? ????      00179         banksel MM
+00E2   08??           00180         movf    MM,0 ;минуты
+00E3   2???           00181         call    write_RTC
+00E4   ???? ????      00182         banksel HH
+00E6   08??           00183         movf    HH,0 ;часы
+00E7   2???           00184         call    write_RTC
+00E8   ???? ????      00185         banksel WD
+00EA   08??           00186         movf    WD,0 ;день недели
+00EB   2???           00187         call    write_RTC
+00EC   ???? ????      00188         banksel DD
+00EE   08??           00189         movf    DD,0 ;число
+00EF   2???           00190         call    write_RTC
+00F0   ???? ????      00191         banksel MO
+00F2   08??           00192         movf    MO,0 ;месяц
+00F3   2???           00193         call    write_RTC
+00F4   ???? ????      00194         banksel YY
+00F6   08??           00195         movf    YY,0 ;год
+00F7   2???           00196         call    write_RTC
+                      00197         RTC_STOP
+                          M         SET_BANK0
+00F8   1283               M         bcf STATUS, RP0
+00F9   1303               M         bcf STATUS, RP1 
+00FA   1185               M         bcf     SDA                     ; SDA low
+00FB   0000               M         nop
+00FC   0000               M         nop
+                          M         SET_BANK1
+00FD   1683               M         bsf STATUS, RP0
+00FE   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FF   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0100   1283               M         bcf STATUS, RP0
+0101   1303               M         bcf STATUS, RP1 
+0102   1585               M         bsf     SDA                     ; SDA high
+0103   0008           00198         return
+                      00199 ;-----------------------------------------------------------------------
+                      00200 ;- Установить время (не меняя при этом все остальное)
+                      00201 ;WriteTime(HH,MM,SS)
+0104                  00202 WriteTime
+                      00203         RTC_START
+                          M         SET_BANK0
+0104   1283               M         bcf STATUS, RP0
+0105   1303               M         bcf STATUS, RP1 
+0106   1585               M         bsf     SDA                     ; SDA high
+0107   0000               M         nop
+                          M         SET_BANK1
+0108   1683               M         bsf STATUS, RP0
+0109   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+010A   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+010B   1283               M         bcf STATUS, RP0
+010C   1303               M         bcf STATUS, RP1 
+010D   1185               M         bcf     SDA                     ; SDA low (start)
+010E   ???? ????      00204         banksel SS
+0110   30D0           00205         movlw   b'11010000';0D0h                        ; slave address + write
+0111   2???           00206         call    write_RTC
+0112   3000           00207         movlw   0x00                    ; set word address to seconds register
+0113   2???           00208         call    write_RTC
+0114   ???? ????      00209         banksel SS
+0116   08??           00210         movf    SS,0 ;секунды
+0117   2???           00211         call    write_RTC
+0118   ???? ????      00212         banksel MM
+011A   08??           00213         movf    MM,0 ;минуты
+011B   2???           00214         call    write_RTC
+011C   ???? ????      00215         banksel HH
+011E   08??           00216         movf    HH,0 ;часы
+011F   2???           00217         call    write_RTC
+                      00218         RTC_STOP
+                          M         SET_BANK0
+0120   1283               M         bcf STATUS, RP0
+0121   1303               M         bcf STATUS, RP1 
+0122   1185               M         bcf     SDA                     ; SDA low
+0123   0000               M         nop
+0124   0000               M         nop
+                          M         SET_BANK1
+0125   1683               M         bsf STATUS, RP0
+0126   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0127   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0128   1283               M         bcf STATUS, RP0
+0129   1303               M         bcf STATUS, RP1 
+012A   1585               M         bsf     SDA                     ; SDA high
+012B   0008           00219         return
+                      00220 ;-----------------------------------------------------------------------
+                      00221 ;- Установить дату (не меняя при этом все остальное)
+                      00222 ;WriteDate(DD,MO,YY)
+012C                  00223 WriteDate
+                      00224         RTC_START
+                          M         SET_BANK0
+012C   1283               M         bcf STATUS, RP0
+012D   1303               M         bcf STATUS, RP1 
+012E   1585               M         bsf     SDA                     ; SDA high
+012F   0000               M         nop
+                          M         SET_BANK1
+0130   1683               M         bsf STATUS, RP0
+0131   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0132   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0133   1283               M         bcf STATUS, RP0
+0134   1303               M         bcf STATUS, RP1 
+0135   1185               M         bcf     SDA                     ; SDA low (start)
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0136   ???? ????      00225         banksel SS
+0138   30D0           00226         movlw   b'11010000';0D0h                        ; slave address + write
+0139   2???           00227         call    write_RTC
+013A   3004           00228         movlw   0x04                    ; адрес регистра с датой
+013B   2???           00229         call    write_RTC
+013C   ???? ????      00230         banksel DD
+013E   08??           00231         movf    DD,0 ;число
+013F   2???           00232         call    write_RTC
+0140   ???? ????      00233         banksel MO
+0142   08??           00234         movf    MO,0 ;месяц
+0143   2???           00235         call    write_RTC
+0144   ???? ????      00236         banksel YY
+0146   08??           00237         movf    YY,0 ;год
+0147   2???           00238         call    write_RTC
+                      00239         RTC_STOP
+                          M         SET_BANK0
+0148   1283               M         bcf STATUS, RP0
+0149   1303               M         bcf STATUS, RP1 
+014A   1185               M         bcf     SDA                     ; SDA low
+014B   0000               M         nop
+014C   0000               M         nop
+                          M         SET_BANK1
+014D   1683               M         bsf STATUS, RP0
+014E   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+014F   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0150   1283               M         bcf STATUS, RP0
+0151   1303               M         bcf STATUS, RP1 
+0152   1585               M         bsf     SDA                     ; SDA high
+0153   0008           00240         return
+                      00241 ;-----------------------------------------------------------------------
+                      00242 ;- Установить день недели (не меняя при этом все остальное)
+                      00243 ;WriteDayofWeek(DW)
+0154                  00244 WriteDayofWeek
+                      00245         RTC_START
+                          M         SET_BANK0
+0154   1283               M         bcf STATUS, RP0
+0155   1303               M         bcf STATUS, RP1 
+0156   1585               M         bsf     SDA                     ; SDA high
+0157   0000               M         nop
+                          M         SET_BANK1
+0158   1683               M         bsf STATUS, RP0
+0159   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+015A   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+015B   1283               M         bcf STATUS, RP0
+015C   1303               M         bcf STATUS, RP1 
+015D   1185               M         bcf     SDA                     ; SDA low (start)
+015E   ???? ????      00246         banksel WD
+0160   30D0           00247         movlw   b'11010000';0D0h                        ; slave address + write
+0161   2???           00248         call    write_RTC
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0162   3003           00249         movlw   0x03                    ; адрес регистра с днем недели
+0163   2???           00250         call    write_RTC
+0164   ???? ????      00251         banksel WD
+0166   08??           00252         movf    WD,0 ;день недели
+0167   2???           00253         call    write_RTC
+                      00254         RTC_STOP
+                          M         SET_BANK0
+0168   1283               M         bcf STATUS, RP0
+0169   1303               M         bcf STATUS, RP1 
+016A   1185               M         bcf     SDA                     ; SDA low
+016B   0000               M         nop
+016C   0000               M         nop
+                          M         SET_BANK1
+016D   1683               M         bsf STATUS, RP0
+016E   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+016F   1505               M         bsf     TRIS_SCL                ; SCL high (input)
+                          M         SET_BANK0
+0170   1283               M         bcf STATUS, RP0
+0171   1303               M         bcf STATUS, RP1 
+0172   1585               M         bsf     SDA                     ; SDA high
+0173   0008           00255         return
+                      00256 ;---- Read RTC into W  ----
+0174                  00257 read_RTC:
+                      00258         SET_BANK1
+0174   1683               M         bsf STATUS, RP0
+0175   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0176   1585           00259         bsf     TRIS_SDA                ; set SDA for input
+0177   ???? ????      00260         banksel COUNT
+0179   3008           00261         movlw   .8              ; send 8 bits
+017A   00??           00262         movwf   COUNT
+                      00263         SET_BANK0
+017B   1283               M         bcf STATUS, RP0
+017C   1303               M         bcf STATUS, RP1 
+017D   1105           00264         bcf     SCL                     ; clock data out
+                      00265         SET_BANK1
+017E   1683               M         bsf STATUS, RP0
+017F   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0180   1105           00266         bcf     TRIS_SCL                ; SCL low (output)
+0181   ???? ????      00267         banksel TMP
+0183   01??           00268         clrf    TMP                     ; clear var
+0184   0D??           00269         rlf     TMP, 1                  ; rotate carry in
+0185   01??           00270         clrf    TMP                     ; clear var again
+0186                  00271 I2C_read_loop:
+0186   0D??           00272         rlf     TMP, 1
+                      00273         SET_BANK1
+0187   1683               M         bsf STATUS, RP0
+0188   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0189   1505           00274         bsf     TRIS_SCL                ; SCL high (input)
+                      00275         SET_BANK0
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+018A   1283               M         bcf STATUS, RP0
+018B   1303               M         bcf STATUS, RP1 
+018C   1985           00276         btfsc   SDA
+018D   2???           00277         goto set_TMP                    ; if data out = 1, set bit
+018E                  00278 cont_I2C_r
+                      00279         SET_BANK0
+018E   1283               M         bcf STATUS, RP0
+018F   1303               M         bcf STATUS, RP1 
+0190   1105           00280         bcf     SCL
+                      00281         SET_BANK1
+0191   1683               M         bsf STATUS, RP0
+0192   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0193   1105           00282         bcf     TRIS_SCL                ; SCL low (output)
+0194   ???? ????      00283         banksel COUNT
+0196   0B??           00284         decfsz  COUNT, 1
+0197   2???           00285         goto    I2C_read_loop
+0198   ???? ????      00286         banksel TMP
+019A   08??           00287         movf    TMP, W
+019B   0008           00288         return
+019C                  00289 set_TMP
+019C   ???? ????      00290         banksel TMP
+019E   1400           00291         bsf TMP,0
+019F   2???           00292         goto cont_I2C_r
+                      00293 ;---- ACK read (assumes SCL=0 on entry) ----
+01A0                  00294 ack:
+                      00295         SET_BANK0
+01A0   1283               M         bcf STATUS, RP0
+01A1   1303               M         bcf STATUS, RP1 
+01A2   1185           00296         bcf             SDA
+                      00297         SET_BANK1
+01A3   1683               M         bsf STATUS, RP0
+01A4   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01A5   1185           00298         bcf     TRIS_SDA                ; set SDA for output
+                      00299         SET_BANK0
+01A6   1283               M         bcf STATUS, RP0
+01A7   1303               M         bcf STATUS, RP1 
+                      00300         SET_BANK1
+01A8   1683               M         bsf STATUS, RP0
+01A9   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01AA   1505           00301         bsf     TRIS_SCL                ; SCL high (input)
+                      00302         SET_BANK0
+01AB   1283               M         bcf STATUS, RP0
+01AC   1303               M         bcf STATUS, RP1 
+01AD   0000           00303         nop
+01AE   1105           00304         bcf     SCL
+                      00305         SET_BANK1
+01AF   1683               M         bsf STATUS, RP0
+01B0   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01B1   1105           00306         bcf     TRIS_SCL                ; SCL low (output)
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01B2   ???? ????      00307         banksel SS
+01B4   0008           00308         return
+                      00309 ;---- NACK read (assumes SCL = 0 on entry) ----
+01B5                  00310 nack:
+                      00311         SET_BANK0
+01B5   1283               M         bcf STATUS, RP0
+01B6   1303               M         bcf STATUS, RP1 
+01B7   1585           00312         bsf     SDA
+                      00313         SET_BANK1
+01B8   1683               M         bsf STATUS, RP0
+01B9   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01BA   1185           00314         bcf     TRIS_SDA                ; set SDA for output
+                      00315         SET_BANK0
+01BB   1283               M         bcf STATUS, RP0
+01BC   1303               M         bcf STATUS, RP1 
+                      00316         SET_BANK1
+01BD   1683               M         bsf STATUS, RP0
+01BE   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01BF   1505           00317         bsf     TRIS_SCL                ; SCL high (input)
+                      00318         SET_BANK0
+01C0   1283               M         bcf STATUS, RP0
+01C1   1303               M         bcf STATUS, RP1 
+01C2   1105           00319         bcf     SCL
+                      00320         SET_BANK1
+01C3   1683               M         bsf STATUS, RP0
+01C4   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01C5   1105           00321         bcf     TRIS_SCL                ; SCL low (output)
+01C6   ???? ????      00322         banksel SS
+01C8   0008           00323         return
+                      00324 ;--- Write the byte in W to RTC ---
+01C9                  00325 write_RTC:
+01C9   ???? ????      00326         banksel TMP
+01CB   00??           00327         movwf   TMP                     ;Save the data
+                      00328 ;--- Do a I2C bus write of byte in 'TMP' ---
+01CC                  00329 I2C_write:
+                      00330         SET_BANK1
+01CC   1683               M         bsf STATUS, RP0
+01CD   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01CE   1185           00331         bcf     TRIS_SDA                ; set SDA for output
+01CF   ???? ????      00332         banksel COUNT
+01D1   3008           00333         movlw   .8                      ; send 8 bits
+01D2   00??           00334         movwf   COUNT
+                      00335         SET_BANK0
+01D3   1283               M         bcf STATUS, RP0
+01D4   1303               M         bcf STATUS, RP1 
+01D5   1105           00336         bcf     SCL
+                      00337         SET_BANK1
+01D6   1683               M         bsf STATUS, RP0
+01D7   1303               M         bcf STATUS, RP1 
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01D8   1105           00338         bcf     TRIS_SCL                ; SCL low (output)
+01D9                  00339 I2C_w_loop:
+                      00340         SET_BANK0
+01D9   1283               M         bcf STATUS, RP0
+01DA   1303               M         bcf STATUS, RP1 
+01DB   1185           00341         bcf     SDA                     ; assume data out is low
+01DC   ???? ????      00342         banksel TMP
+01DE   1B80           00343         btfsc   TMP, 7
+01DF   2???           00344         call set_SDA    
+                      00345         ; nop
+                      00346         SET_BANK1
+01E0   1683               M         bsf STATUS, RP0
+01E1   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01E2   1505           00347         bsf     TRIS_SCL                ; SCL high (input)
+01E3   ???? ????      00348         banksel TMP
+01E5   0D??           00349         rlf     TMP, 1
+                      00350         SET_BANK0
+01E6   1283               M         bcf STATUS, RP0
+01E7   1303               M         bcf STATUS, RP1 
+01E8   1105           00351         bcf     SCL                     ; clock it in
+                      00352         SET_BANK1
+01E9   1683               M         bsf STATUS, RP0
+01EA   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01EB   1105           00353         bcf     TRIS_SCL                ; SCL low (output)
+01EC   ???? ????      00354         banksel COUNT
+01EE   0B??           00355         decfsz  COUNT, 1
+01EF   2???           00356         goto    I2C_w_loop
+                      00357         SET_BANK1
+01F0   1683               M         bsf STATUS, RP0
+01F1   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01F2   1585           00358         bsf     TRIS_SDA                ; set SDA for input
+                      00359         SET_BANK0
+01F3   1283               M         bcf STATUS, RP0
+01F4   1303               M         bcf STATUS, RP1 
+01F5   1105           00360         bcf     SCL
+                      00361         SET_BANK1
+01F6   1683               M         bsf STATUS, RP0
+01F7   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01F8   1105           00362         bcf     TRIS_SCL                ; SCL low (output)
+01F9   0000           00363         nop
+01FA   0000           00364         nop
+01FB   0000           00365         nop
+01FC   0000           00366         nop
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+01FD   1505           00367         bsf     TRIS_SCL                ; SCL high (input)
+                      00368         SET_BANK0
+01FE   1283               M         bcf STATUS, RP0
+01FF   1303               M         bcf STATUS, RP1 
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0200   1105           00369         bcf             SCL
+                      00370         SET_BANK1
+0201   1683               M         bsf STATUS, RP0
+0202   1303               M         bcf STATUS, RP1 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0203   1105           00371         bcf     TRIS_SCL                ; SCL low (output)
+                      00372         SET_BANK0
+0204   1283               M         bcf STATUS, RP0
+0205   1303               M         bcf STATUS, RP1 
+0206   0008           00373         return
+0207                  00374 set_SDA
+                      00375         SET_BANK0
+0207   1283               M         bcf STATUS, RP0
+0208   1303               M         bcf STATUS, RP1 
+0209   1585           00376         bsf     SDA                     ; if data out = 1, set bit
+020A   0008           00377         return
+                      00378 ;----------------------------------------------------------------------
+                      00379         end
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS10                             00000002
+ANS11                             00000003
+ANS12                             00000004
+ANS13                             00000005
+ANS2                              00000002
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+ANSEL                             00000188
+ANSELH                            00000189
+BAUDCTL                           00000187
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+BRG5                              00000005
+BRG6                              00000006
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BRGH                              00000002
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1IE                              00000005
+C1IF                              00000005
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SEN                             00000005
+C2CH0                             00000000
+C2CH1                             00000001
+C2IE                              00000006
+C2IF                              00000006
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2REN                             00000004
+C2RSEL                            00000004
+C2SYNC                            00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CKE                               00000006
+CKP                               00000004
+CM1CON0                           00000107
+CM2CON0                           00000108
+CM2CON1                           00000109
+COUNT                             00000001
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+DD                                00000004
+D_A                               00000005
+D_NOT_A                           00000005
+ECCPAS                            0000009C
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDAT                             0000010C
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+FVREN                             00000000
+GCEN                              00000007
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+HH                                00000000
+HTS                               00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+I2C_read_loop                     00000186
+I2C_w_loop                        000001D9
+I2C_write                         000001CC
+INDF                              00000000
+INTCON                            0000000B
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOCB                              00000096
+IOCB0                             00000000
+IOCB1                             00000001
+IOCB2                             00000002
+IOCB3                             00000003
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+LTS                               00000001
+MC1OUT                            00000007
+MC2OUT                            00000006
+MM                                00000001
+MO                                00000005
+MSK                               00000093
+MSK0                              00000000
+MSK1                              00000001
+MSK2                              00000002
+MSK3                              00000003
+MSK4                              00000004
+MSK5                              00000005
+MSK6                              00000006
+MSK7                              00000007
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000007
+OSFIF                             00000007
+OSTS                              00000003
+P                                 00000004
+P1M0                              00000006
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+P1M1                              00000007
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PORTD                             00000008
+PORTE                             00000009
+PR2                               00000092
+PRSEN                             00000007
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PSTRCON                           0000009D
+PULSR                             00000002
+PULSS                             00000003
+PWM1CON                           0000009B
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RA7                               00000007
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RTC_START                         
+RTC_STOP                          
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+ReadDate                          0000006E
+ReadDayofWeek                     000000A1
+ReadRTCData                       00000000
+ReadTime                          0000003D
+S                                 00000003
+SBOREN                            00000004
+SCKP                              00000004
+SCL                               PORTA,2
+SCS                               00000000
+SDA                               PORTA,3
+SEN                               00000000
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SENDB                             00000003
+SET_BANK0                         
+SET_BANK1                         
+SMP                               00000007
+SPBRG                             00000099
+SPBRGH                            0000009A
+SPEN                              00000007
+SR0                               00000006
+SR1                               00000007
+SRCON                             00000185
+SREN                              00000005
+SS                                00000002
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000093
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+SWDTEN                            00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GINV                            00000007
+T1GIV                             00000007
+T1GSS                             00000001
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMP                               00000000
+TMR0                              00000001
+TMR0IE                            00000005
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000088
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISE                             00000089
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRISE3                            00000003
+TRIS_SCL                          TRISA,2
+TRIS_SDA                          TRISA,3
+TRMT                              00000001
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+UA                                00000001
+ULPWUE                            00000005
+ULPWUIE                           00000002
+ULPWUIF                           00000002
+VCFG0                             00000004
+VCFG1                             00000005
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000097
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+VRSS                              00000004
+W                                 00000000
+WCOL                              00000007
+WD                                00000003
+WDTCON                            00000105
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPUB                              00000095
+WPUB0                             00000000
+WPUB1                             00000001
+WPUB2                             00000002
+WPUB3                             00000003
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPUB7                             00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+WriteDate                         0000012C
+WriteDayofWeek                    00000154
+WriteRTC                          000000CE
+WriteTime                         00000104
+YY                                00000006
+Z                                 00000002
+_BOR21V                           00003EFF
+_BOR40V                           00003FFF
+_BOR4V_BOR21V                     00003EFF
+_BOR4V_BOR40V                     00003FFF
+_BOREN_NSLEEP                     00003EFF
+_BOREN_OFF                        00003CFF
+_BOREN_ON                         00003FFF
+_BOREN_SBODEN                     00003DFF
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_BOR_SBODEN                       00003DFF
+_CONFIG1                          00002007
+_CONFIG2                          00002008
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         00001FFF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_FOSC_EC                          00003FFB
+_FOSC_EXTRC_CLKOUT                00003FFF
+_FOSC_EXTRC_NOCLKOUT              00003FFE
+_FOSC_HS                          00003FFA
+_FOSC_INTRC_CLKOUT                00003FFD
+_FOSC_INTRC_NOCLKOUT              00003FFC
+_FOSC_LP                          00003FF8
+_FOSC_XT                          00003FF9
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+MPASM  5.51                       RTCTIME.ASM   2-22-2018  13:03:14         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_LVP_OFF                          00002FFF
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDTE_OFF                         00003FF7
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FF9
+__16F887                          00000001
+__DEBUG                           1
+ack                               000001A0
+cont_I2C_r                        0000018E
+nack                              000001B5
+read_RTC                          00000174
+set_SDA                           00000207
+set_TMP                           0000019C
+write_RTC                         000001C9
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    38 reported,     0 suppressed
+
+

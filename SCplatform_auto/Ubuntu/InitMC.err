@@ -1,0 +1,19 @@
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 8 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 9 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 10 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 12 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 13 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 18 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 19 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 21 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 34 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 35 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 36 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 37 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 38 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Error[113]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 43 : Symbol not previously defined (CS_IN)
+Error[128]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 43 : Missing argument(s)
+Error[113]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 44 : Symbol not previously defined (WR_IN)
+Error[128]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 44 : Missing argument(s)
+Error[113]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 45 : Symbol not previously defined (DATA_IN)
+Error[128]   C:\PICMICRO\SCALECONNECT\SCPLATFORM_AUTO\INITMC.ASM 45 : Missing argument(s)
