@@ -74,24 +74,31 @@ ReadRTCData
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
+	banksel SS
 	movwf	SS			; save it
 	call	ack;
 	call	read_RTC		; and so on
+	banksel MM
 	movwf	MM
 	call	ack;
 	call	read_RTC
+	banksel HH
 	movwf	HH
 	call	ack;
 	call	read_RTC
+	banksel WD
 	movwf	WD
 	call	ack;
 	call	read_RTC
+	banksel DD
 	movwf	DD
 	call	ack;
 	call	read_RTC
+	banksel MO
 	movwf	MO
 	call	ack;
 	call	read_RTC
+	banksel YY
 	movwf	YY
 	call	nack;
 	RTC_STOP
@@ -110,12 +117,15 @@ ReadTime
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
+	banksel SS
 	movwf	SS			; save it
 	call	ack;
 	call	read_RTC		; and so on
+	banksel MM
 	movwf	MM
 	call	ack;
 	call	read_RTC
+	banksel HH
 	movwf	HH
 	call	nack;
 	RTC_STOP
@@ -135,12 +145,15 @@ ReadDate
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
+	banksel DD
 	movwf	DD
 	call	ack;
 	call	read_RTC
+	banksel MO
 	movwf	MO
 	call	ack;
 	call	read_RTC
+	banksel YY
 	movwf	YY
 	call	nack;
 	RTC_STOP
@@ -160,6 +173,7 @@ ReadDayofWeek
 	movlw	b'11010001';0D1h			; slave address + read
 	call	write_RTC
 	call	read_RTC		; read the seconds data
+	banksel WD
 	movwf	WD
 	call	nack;
 	RTC_STOP

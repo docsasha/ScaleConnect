@@ -1,4 +1,4 @@
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  1
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000017            00027 simbF equ 0x17 ;код символа "F"
   0000005D            00028 simbG equ 0x5D ;код символа "G"
   00000067            00029 simbH equ 0x67 ;код символа "H"
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  2
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00054 ;lcd_data_addr перед вызовом процедуры записывается в аккумулятор
 001D                  00055 LCD_Data_Duplicate
 001D   ???? ????      00056         banksel buf_temp
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  3
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 004B   00??           00103         movwf counter
 004C                  00104 send_zero_4
 004C   2???           00105         call SET_ZERO ;подача логического нуля на драйвер дисплея
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  4
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0079   3C10           00153         sublw .16 ;w=16-simb_pos
 007A   3E??           00154         addlw Display_Data ;w=Display_Data+16-simb_pos
 007B   0084           00155         movwf FSR
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  5
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00A0                  00205 koma_set
 00A0   ???? ????      00206         banksel temp
 00A2   0084           00207         movwf FSR
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  6
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00CE   1800           00258         btfsc temp2,0
 00CF   1780           00259         bsf Display_Data,7
 00D0   0008           00260         return
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  7
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00FF   08??           00311         movf KomaPos,0
 0100   3A0A           00312         xorlw .10
 0101   1903           00313         btfsc STATUS,Z
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  8
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0130   3A03           00364         xorlw .3
 0131   1903           00365         btfsc STATUS,Z
 0132   1280           00366         bcf INDF,5
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE  9
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0165   3A10           00417         xorlw .16
 0166   1903           00418         btfsc STATUS,Z
 0167   1000           00419         bcf INDF,0
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 10
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00470 ;MsgAddr – адрес начала области памяти где хранятся 5 символов в ASCII коде для вывода в первую строку
                       00471 ;- Вывести сообщение во второй строке
                       00472 ;адрес начала области 5 байт указываем в аккумуляторе
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 11
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 01B0   0804           00523         movf FSR,0 ;сохраняем FSR
 01B1   00??           00524         movwf simb_temp
                       00525 
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 12
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 01DA   1283               M         bcf STATUS, RP0
 01DB   1303               M         bcf STATUS, RP1 
 01DC   1286           00574         bcf WR ;WR=0
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 13
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -765,7 +765,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0210   2???           00619         call SET_ZERO ;подача логического нуля на драйвер дисплея
 0211   2???           00620         call SET_ZERO ;подача логического нуля на драйвер дисплея
 0212   2???           00621         call SET_ZERO ;подача логического нуля на драйвер дисплея
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 14
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -824,7 +824,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0242   2???           00670         call SET_ZERO ;подача логического нуля на драйвер дисплея
                       00671         SET_BANK0
 0243   1283               M         bcf STATUS, RP0
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 15
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -883,7 +883,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0279   00??           00717         movwf counter
 027A                  00718 send_zero_3
 027A   2???           00719         call SET_ZERO ;подача логического нуля на драйвер дисплея
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 16
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -942,7 +942,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02A3   1903           00768         btfsc STATUS,Z  
 02A4   345B           00769         retlw simb5             
                       00770 
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 17
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1001,7 +1001,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02CD   08??           00821         movf temp,0
 02CE   3A47           00822         xorlw 'G'
 02CF   1903           00823         btfsc STATUS,Z  
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 18
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1060,7 +1060,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02F8   346D           00874         retlw simbU
                       00875 
 02F9   08??           00876         movf temp,0
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 19
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1082,7 +1082,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0305   0008           00890         return
                       00891 ;---------------------------------------------------------------------------
                       00892         end
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 20
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 20
 
 
 SYMBOL TABLE
@@ -1141,7 +1141,7 @@ BRG4                              00000004
 BRG5                              00000005
 BRG6                              00000006
 BRG7                              00000007
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 21
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 21
 
 
 SYMBOL TABLE
@@ -1200,7 +1200,7 @@ CCPR2H                            0000001C
 CCPR2L                            0000001B
 CHS0                              00000002
 CHS1                              00000003
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 22
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 22
 
 
 SYMBOL TABLE
@@ -1259,7 +1259,7 @@ HTS                               00000002
 I2C_DATA                          00000005
 I2C_READ                          00000002
 I2C_START                         00000003
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 23
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 23
 
 
 SYMBOL TABLE
@@ -1318,7 +1318,7 @@ OERR                              00000001
 OPTION_REG                        00000081
 OSCCON                            0000008F
 OSCTUNE                           00000090
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 24
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 24
 
 
 SYMBOL TABLE
@@ -1377,7 +1377,7 @@ RA2                               00000002
 RA3                               00000003
 RA4                               00000004
 RA5                               00000005
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 25
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 25
 
 
 SYMBOL TABLE
@@ -1436,7 +1436,7 @@ R_NOT_W                           00000002
 R_W                               00000002
 S                                 00000003
 SBOREN                            00000004
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 26
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 26
 
 
 SYMBOL TABLE
@@ -1495,7 +1495,7 @@ T1INSYNC                          00000002
 T1OSCEN                           00000003
 T1SYNC                            00000002
 T2CKPS0                           00000000
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 27
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 27
 
 
 SYMBOL TABLE
@@ -1554,7 +1554,7 @@ TRISC7                            00000007
 TRISD                             00000088
 TRISD0                            00000000
 TRISD1                            00000001
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 28
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 28
 
 
 SYMBOL TABLE
@@ -1613,7 +1613,7 @@ WPUB0                             00000000
 WPUB1                             00000001
 WPUB2                             00000002
 WPUB3                             00000003
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 29
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 29
 
 
 SYMBOL TABLE
@@ -1672,7 +1672,7 @@ _EXTRC                            00003FFF
 _EXTRCIO                          00003FFE
 _EXTRC_OSC_CLKOUT                 00003FFF
 _EXTRC_OSC_NOCLKOUT               00003FFE
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 30
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 30
 
 
 SYMBOL TABLE
@@ -1731,7 +1731,7 @@ nextASCII_2                       00000193
 nextASCII_3                       000001B4
 next_dupl                         0000003D
 next_dupl_bit                     00000032
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 31
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 31
 
 
 SYMBOL TABLE
@@ -1790,7 +1790,7 @@ simbr                             00000006
 simbt                             0000000F
 temp                              00000000
 temp2                             00000004
-MPASM  5.51                     TM1621LCD.ASM   2-21-2018  16:35:40         PAGE 32
+MPASM  5.51                     TM1621LCD.ASM   3-2-2018  18:39:05         PAGE 32
 
 
 SYMBOL TABLE

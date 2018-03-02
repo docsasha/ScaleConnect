@@ -35,16 +35,19 @@ loop_cnt	res .1 ;счетчик цикла
 	extern HH,MM,SS,WD,DD,MO,YY ;<RTCTime.asm>
 	extern ReadRTCData, ReadTime, ReadDate, ReadDayofWeek;<RTCTime.asm>
 	extern WriteRTC, WriteTime, WriteDate, WriteDayofWeek;<RTCTime.asm>
+	;подключение модуля работы с встроенным ППЗУ
+	extern ee_read, ee_write ;<EEPROM.asm>
+	;подключение модуля для работы с UART
+	extern TX_LEN, UART_TX_ON, UART_TX_OFF;<UART.asm>
+	extern UART_Setup, SendBytetoUART, SendPackettoUART, GetUARTByte;<UART.asm>
+	extern UART_Buf ;<UART.asm>
 	;подключение модуля Tiny RTC - работа с ППЗУ 24C32N	
 	extern MEM_ADDR_H, MEM_ADDR_L, MEM_LEN, R_BUFFER;<RTCEEPROM.asm>
 	extern WriteADDR, WriteBlock, ReadADDR, ReadBlock	;<RTCEEPROM.asm>
-	;подключение модуля работы с встроенным ППЗУ
-	extern ee_read, ee_write ;<EEPROM.asm>
-
 ;-----------------------------------------------------------------------
 ;макросы
 	include <macroTM1621.inc>
-;1)печать всех разрядов дисплея в видестроки !без запятых (16 символов)
+;1)печать всех разрядов дисплея в виде строки !без запятых (16 символов)
 ;PRINT_STR MACRO S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16 
 ;2)печать первой строки !без запятых (5 символов)
 ;PRINT_STR_1 MACRO S1,S2,S3,S4,S5  
@@ -79,6 +82,14 @@ loop_cnt	res .1 ;счетчик цикла
 ;DW_to_1STR MACRO
 ;9)макрос записи показателей времени из ППЗУ начиная с адреса TIMEADDR - данные записанны в формате BCD
 ;WRITE_RTC_EE MACRO TIMEADDR
+	include <macroUART.inc>
+;1)макрос отправки в порт значения переменной
+;UART_SEND_VAL MACRO VAL
+;2)макрос отправки в порт константы
+;UART_SEND_CONST MACRO CONST
+;3)макрос отправки в порт значений записанных в области начиная с BEGIN_ADDR
+;длиной SEND_LEN (до 8 байт)
+;UART_SEND_MEM MACRO BEGIN_ADDR, SEND_LEN
 ;-----------------------------------------------------------------------
 
 ;пишем начальные значения ППЗУ
@@ -107,9 +118,11 @@ loop_cnt	res .1 ;счетчик цикла
 ;-----------------------------------------------------------------------	
 start
 	lcall initMC;<initMC.inc> Инициализация микроконтроллера
+	lcall UART_Setup ;<UART.asm> настраиваем модуль UART
 	lcall init_LCD;<TM1621LCD.asm> инициализация дисплея	
 	lcall pause_05s ;<pauses_20MHz.asm>пауза
 	lcall clr_bufer ;<TM1621ClrBuf.inc> очистка указателей на буфер дисплея
+	lcall UART_TX_ON ;<UART.asm> включаем передатчик
 	pagesel $
 	;тестируем функции печати
 	banksel koma
@@ -118,7 +131,7 @@ start
 
 	;пишем время в часы
 	WRITE_RTC_EE 0x00
-	;WRITE_RTC 0x12, 0x10, 0x00,.3, 0x21, 0x02, 0x18
+	;WRITE_RTC 0x17, 0x30, 0x00,.5, 0x02, 0x03, 0x18
 	
 time_to_LCD
 	;читаем время и дату из часов
@@ -130,6 +143,10 @@ time_to_LCD
 	DATE_to_2STR
 	;выводим время в 3ю строку
 	TIME_to_3STR
+
+	UART_SEND_VAL SS
+
+	UART_SEND_MEM HH, 7
 
 	lcall pause_1s
 	pagesel $

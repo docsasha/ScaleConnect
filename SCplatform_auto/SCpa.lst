@@ -1,4 +1,4 @@
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  1
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Message[303]: Program word too large.  Truncated to core size. (F8FF)
   0000003E            00004 simb2 equ 0x3E ;код символа "2"
   0000007A            00005 simb3 equ 0x7A ;код символа "3"
   00000063            00006 simb4 equ 0x63 ;код символа "4"
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  2
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   0000                00025         extern SetKoma, ClrKoma, KomaPos, koma_set
                       00026         ;подключение модуля пауз
   0000                00027         extern pause_5s, pause_1s, pause_05s ;<pauses_20MHz.asm>
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  3
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -132,15 +132,18 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   0000                00035         extern HH,MM,SS,WD,DD,MO,YY ;<RTCTime.asm>
   0000                00036         extern ReadRTCData, ReadTime, ReadDate, ReadDayofWeek;<RTCTime.asm>
   0000                00037         extern WriteRTC, WriteTime, WriteDate, WriteDayofWeek;<RTCTime.asm>
-                      00038         ;подключение модуля Tiny RTC - работа с ППЗУ 24C32N     
-  0000                00039         extern MEM_ADDR_H, MEM_ADDR_L, MEM_LEN, R_BUFFER;<RTCEEPROM.asm>
-  0000                00040         extern WriteADDR, WriteBlock, ReadADDR, ReadBlock       ;<RTCEEPROM.asm>
-                      00041         ;подключение модуля работы с встроенным ППЗУ
-  0000                00042         extern ee_read, ee_write ;<EEPROM.asm>
-                      00043 
-                      00044 ;-----------------------------------------------------------------------
-                      00045 ;макросы
-                      00046         include <macroTM1621.inc>
+                      00038         ;подключение модуля работы с встроенным ППЗУ
+  0000                00039         extern ee_read, ee_write ;<EEPROM.asm>
+                      00040         ;подключение модуля для работы с UART
+  0000                00041         extern TX_LEN, UART_TX_ON, UART_TX_OFF;<UART.asm>
+  0000                00042         extern UART_Setup, SendBytetoUART, SendPackettoUART, GetUARTByte;<UART.asm>
+  0000                00043         extern UART_Buf ;<UART.asm>
+                      00044         ;подключение модуля Tiny RTC - работа с ППЗУ 24C32N     
+  0000                00045         extern MEM_ADDR_H, MEM_ADDR_L, MEM_LEN, R_BUFFER;<RTCEEPROM.asm>
+  0000                00046         extern WriteADDR, WriteBlock, ReadADDR, ReadBlock       ;<RTCEEPROM.asm>
+                      00047 ;-----------------------------------------------------------------------
+                      00048 ;макросы
+                      00049         include <macroTM1621.inc>
                       00001 ;-----------------------------------------------------------------------
                       00002 ;печать всех разрядов дисплея в видестроки без запятых (16 символов)
                       00003 ;запятые задаются отдельно
@@ -172,15 +175,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00029         movwf seg3_2
                       00030         movlw S13
                       00031         movwf seg3_3
-                      00032         movlw S14
-                      00033         movwf seg3_4
-                      00034         movlw S15
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  4
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00032         movlw S14
+                      00033         movwf seg3_4
+                      00034         movlw S15
                       00035         movwf seg3_5
                       00036         movlw S16
                       00037         movwf seg3_6
@@ -231,15 +234,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00082         movlw S1
                       00083         movwf seg3_1
                       00084         movlw S2
-                      00085         movwf seg3_2
-                      00086         movlw S3
-                      00087         movwf seg3_3
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  5
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00085         movwf seg3_2
+                      00086         movlw S3
+                      00087         movwf seg3_3
                       00088         movlw S4
                       00089         movwf seg3_4
                       00090         movlw S5
@@ -290,38 +293,38 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00135         ENDM
                       00136 ;----------------------------------------------------------------------
                       00137 ;Напечатать значение переменной VAL в позиции POS
-                      00138 PRINT_VAL MACRO VAL, POS ;POS 1..16
-                      00139         banksel simb_pos
-                      00140         movlw POS
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  6
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00138 PRINT_VAL MACRO VAL, POS ;POS 1..16
+                      00139         banksel simb_pos
+                      00140         movlw POS
                       00141         movwf simb_pos
                       00142         banksel VAL
                       00143         movf VAL,0      
                       00144         lcall PrintSimb
                       00145         pagesel $
                       00146         ENDM
-                      00047 ;1)печать всех разрядов дисплея в видестроки !без запятых (16 символов)
-                      00048 ;PRINT_STR MACRO S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16 
-                      00049 ;2)печать первой строки !без запятых (5 символов)
-                      00050 ;PRINT_STR_1 MACRO S1,S2,S3,S4,S5  
-                      00051 ;3)печать 2ой строки !без запятых (5 символов)
-                      00052 ;PRINT_STR_2 MACRO S1,S2,S3,S4,S5 
-                      00053 ;4)печать 3й строки !без запятых (6 символов)
-                      00054 ;PRINT_STR_3 MACRO S1,S2,S3,S4,S5,S6 
-                      00055 ;5)установить запятую в позицию POS (1-16)
-                      00056 ;SET_KOMA MACRO POS
-                      00057 ;6)удалить запятую в позиции POS (1-16)
-                      00058 ;CLR_KOMA MACRO POS  
-                      00059 ;7)Напечатать символ SIMB в позиции POS
-                      00060 ;PRINT_SIMB MACRO SIMB, POS
-                      00061 ;8)Напечатать значение переменной VAL в позиции POS
-                      00062 ;PRINT_VAL MACRO VAL, POS ;POS 1..16
-                      00063         include <macroTinyRTC.inc>
+                      00050 ;1)печать всех разрядов дисплея в видестроки !без запятых (16 символов)
+                      00051 ;PRINT_STR MACRO S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16 
+                      00052 ;2)печать первой строки !без запятых (5 символов)
+                      00053 ;PRINT_STR_1 MACRO S1,S2,S3,S4,S5  
+                      00054 ;3)печать 2ой строки !без запятых (5 символов)
+                      00055 ;PRINT_STR_2 MACRO S1,S2,S3,S4,S5 
+                      00056 ;4)печать 3й строки !без запятых (6 символов)
+                      00057 ;PRINT_STR_3 MACRO S1,S2,S3,S4,S5,S6 
+                      00058 ;5)установить запятую в позицию POS (1-16)
+                      00059 ;SET_KOMA MACRO POS
+                      00060 ;6)удалить запятую в позиции POS (1-16)
+                      00061 ;CLR_KOMA MACRO POS  
+                      00062 ;7)Напечатать символ SIMB в позиции POS
+                      00063 ;PRINT_SIMB MACRO SIMB, POS
+                      00064 ;8)Напечатать значение переменной VAL в позиции POS
+                      00065 ;PRINT_VAL MACRO VAL, POS ;POS 1..16
+                      00066         include <macroTinyRTC.inc>
                       00001 ;макросы для работы с модулем часов реального времени
                       00002 ;------------------------------------------------------------------------
                       00003 ;макрос записи показателей времени из констант - данные записанны в формате BCD
@@ -349,15 +352,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00025 WRITE_TIME MACRO HOURS, MINUTES, SECONDS
                       00026         banksel HH
                       00027         movlw HOURS
-                      00028         movwf HH
-                      00029         movlw MINUTES
-                      00030         movwf MM
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  7
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00028         movwf HH
+                      00029         movlw MINUTES
+                      00030         movwf MM
                       00031         movlw SECONDS
                       00032         movwf SS
                       00033         lcall WriteTime
@@ -408,15 +411,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00078         addlw 0x30
                       00079         banksel seg3_3
                       00080         movwf seg3_3
-                      00081 
-                      00082         banksel MM
-                      00083         movf MM,0
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  8
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00081 
+                      00082         banksel MM
+                      00083         movf MM,0
                       00084         andlw 0x0F
                       00085         addlw 0x30      
                       00086         banksel seg3_4
@@ -467,15 +470,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00131         movwf seg2_4
                       00132 
                       00133         banksel MO
-                      00134         movf MO,0
-                      00135         andlw 0x0F
-                      00136         addlw 0x30      
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE  9
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00134         movf MO,0
+                      00135         andlw 0x0F
+                      00136         addlw 0x30      
                       00137         banksel seg2_5
                       00138         movwf seg2_5
                       00139 
@@ -526,15 +529,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00184         btfsc STATUS,Z
                       00185         goto its_tuesday
                       00186         movf WD,0
-                      00187         xorlw .3
-                      00188         btfsc STATUS,Z
-                      00189         goto its_wednesday
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 10
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00187         xorlw .3
+                      00188         btfsc STATUS,Z
+                      00189         goto its_wednesday
                       00190         movf WD,0
                       00191         xorlw .4
                       00192         btfsc STATUS,Z
@@ -585,15 +588,15 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00237         movlw TIMEADDR+.2
                       00238         lcall ee_read
                       00239         pagesel $
-                      00240         banksel SS
-                      00241         movwf SS
-                      00242         movlw TIMEADDR+.3
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 11
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00240         banksel SS
+                      00241         movwf SS
+                      00242         movlw TIMEADDR+.3
                       00243         lcall ee_read
                       00244         pagesel $
                       00245         banksel WD
@@ -616,54 +619,134 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00262         lcall WriteRTC
                       00263         pagesel $
                       00264         ENDM
-                      00064 ;1)макрос записи показателей времени из констант - данные записанны в формате BCD
-                      00065 ;WRITE_RTC MACRO HOURS, MINUTES, SECONDS, DAY_of_WEEK, DATE, MONTH, YEAR
-                      00066 ;2)макрос записи времени из констант - данные записанны в формате BCD
-                      00067 ;WRITE_TIME MACRO HOURS, MINUTES, SECONDS
-                      00068 ;3)макрос записи даты из констант - данные записанны в формате BCD
-                      00069 ;WRITE_DATE MACRO DATE, MONTH, YEAR
-                      00070 ;4)макрос записи дня недели из константы - данные записанны в формате BCD
-                      00071 ;WRITE_DAY_of_WEEK MACRO DAY_of_WEEK
-                      00072 ;5)макрос вывода в третью строку текущего времени (переменные HH,MM,SS)
-                      00073 ;TIME_to_3STR MACRO
-                      00074 ;6)макрос вывода во вторую строку текущей даты (переменные DD,MO)
-                      00075 ;DATE_to_2STR MACRO
-                      00076 ;7)макрос вывода во вторую строку текущего года 20ХХ (переменная YY)
-                      00077 ;YEAR_to_2STR MACRO
-                      00078 ;8)макрос вывода в 1ю строку текущего дня недели (переменная WD)
-                      00079 ;DW_to_1STR MACRO
-                      00080 ;9)макрос записи показателей времени из ППЗУ начиная с адреса TIMEADDR - данные записанны в формате BCD
-                      00081 ;WRITE_RTC_EE MACRO TIMEADDR
-                      00082 ;-----------------------------------------------------------------------
-                      00083 
-                      00084 ;пишем начальные значения ППЗУ
-                      00085         Org 0x2100;пишем в ППЗУ (по адресу 0x00) выставляемое в модуль часов время
-2100   0016           00086         DE 0x16 ;часы
-2101   0045           00087         DE 0x45 ;минуты
-2102   0000           00088         DE 0x00 ;секунды
-2103   0001           00089         DE .1  ;день недели
-2104   0021           00090         DE 0x21 ;число
-2105   0002           00091         DE 0x02 ;месяц
-2106   0018           00092         DE 0x18 ;год 
-                      00093 
-                      00094 ;основной блок программы
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 12
+                      00067 ;1)макрос записи показателей времени из констант - данные записанны в формате BCD
+                      00068 ;WRITE_RTC MACRO HOURS, MINUTES, SECONDS, DAY_of_WEEK, DATE, MONTH, YEAR
+                      00069 ;2)макрос записи времени из констант - данные записанны в формате BCD
+                      00070 ;WRITE_TIME MACRO HOURS, MINUTES, SECONDS
+                      00071 ;3)макрос записи даты из констант - данные записанны в формате BCD
+                      00072 ;WRITE_DATE MACRO DATE, MONTH, YEAR
+                      00073 ;4)макрос записи дня недели из константы - данные записанны в формате BCD
+                      00074 ;WRITE_DAY_of_WEEK MACRO DAY_of_WEEK
+                      00075 ;5)макрос вывода в третью строку текущего времени (переменные HH,MM,SS)
+                      00076 ;TIME_to_3STR MACRO
+                      00077 ;6)макрос вывода во вторую строку текущей даты (переменные DD,MO)
+                      00078 ;DATE_to_2STR MACRO
+                      00079 ;7)макрос вывода во вторую строку текущего года 20ХХ (переменная YY)
+                      00080 ;YEAR_to_2STR MACRO
+                      00081 ;8)макрос вывода в 1ю строку текущего дня недели (переменная WD)
+                      00082 ;DW_to_1STR MACRO
+                      00083 ;9)макрос записи показателей времени из ППЗУ начиная с адреса TIMEADDR - данные записанны в формате BCD
+                      00084 ;WRITE_RTC_EE MACRO TIMEADDR
+                      00085         include <macroUART.inc>
+                      00001 ;макросы для работы с UART
+                      00002 ;------------------------------------------------------------------------
+                      00003 ;макрос отправки в порт значения переменной
+                      00004 UART_SEND_VAL MACRO VAL
+                      00005         banksel VAL
+                      00006         movf VAL,0
+                      00007         lcall SendBytetoUART
+                      00008         pagesel $
+                      00009         ENDM
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00095         org 0x0000
-0000   2???           00096         goto start
-                      00097         org 0x0004 ;вектор прерываний
-                      00098 ;-----------------------------------------------------------------------
-0004   138B           00099         bcf INTCON,7 ;запрещаем прерывания
-                      00100         ;выясняем источник прерывания
-                      00101         ;btfsc PIR1,0 ;(TMR1IF)
-                      00102         ;goto TMR1_int ;идем на обработку прерывания от таймера 1
-                      00103 
-                      00104 ;Захват данных с дисплея весов
-                      00105         include <TM1621Capture.inc> ;захват даныых с дисплея
+                      00010 ;------------------------------------------------------------------------
+                      00011 ;макрос отправки в порт константы
+                      00012 UART_SEND_CONST MACRO CONST
+                      00013         movlw CONST
+                      00014         lcall SendBytetoUART
+                      00015         pagesel $
+                      00016         ENDM
+                      00017 ;------------------------------------------------------------------------
+                      00018 ;макрос отправки в порт значений записанных в области начиная с BEGIN_ADDR
+                      00019 ;длиной SEND_LEN (до 8 байт)
+                      00020 UART_SEND_MEM MACRO BEGIN_ADDR, SEND_LEN
+                      00021         banksel BEGIN_ADDR
+                      00022         movf BEGIN_ADDR,0
+                      00023         banksel UART_Buf
+                      00024         movwf UART_Buf
+                      00025 
+                      00026         banksel BEGIN_ADDR
+                      00027         movf BEGIN_ADDR+.1,0
+                      00028         banksel UART_Buf
+                      00029         movwf UART_Buf+.1
+                      00030 
+                      00031         banksel BEGIN_ADDR
+                      00032         movf BEGIN_ADDR+.2,0
+                      00033         banksel UART_Buf
+                      00034         movwf UART_Buf+.2
+                      00035 
+                      00036         banksel BEGIN_ADDR
+                      00037         movf BEGIN_ADDR+.3,0
+                      00038         banksel UART_Buf
+                      00039         movwf UART_Buf+.3
+                      00040 
+                      00041         banksel BEGIN_ADDR
+                      00042         movf BEGIN_ADDR+.4,0
+                      00043         banksel UART_Buf
+                      00044         movwf UART_Buf+.4
+                      00045 
+                      00046         banksel BEGIN_ADDR
+                      00047         movf BEGIN_ADDR+.5,0
+                      00048         banksel UART_Buf
+                      00049         movwf UART_Buf+.5
+                      00050 
+                      00051         banksel BEGIN_ADDR
+                      00052         movf BEGIN_ADDR+.6,0
+                      00053         banksel UART_Buf
+                      00054         movwf UART_Buf+.6
+                      00055 
+                      00056         banksel BEGIN_ADDR
+                      00057         movf BEGIN_ADDR+.7,0
+                      00058         banksel UART_Buf
+                      00059         movwf UART_Buf+.7
+                      00060 
+                      00061         banksel TX_LEN                  
+                      00062         movlw SEND_LEN
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00063         movwf TX_LEN
+                      00064         lcall SendPackettoUART
+                      00065         pagesel $
+                      00066         ENDM
+                      00086 ;1)макрос отправки в порт значения переменной
+                      00087 ;UART_SEND_VAL MACRO VAL
+                      00088 ;2)макрос отправки в порт константы
+                      00089 ;UART_SEND_CONST MACRO CONST
+                      00090 ;3)макрос отправки в порт значений записанных в области начиная с BEGIN_ADDR
+                      00091 ;длиной SEND_LEN (до 8 байт)
+                      00092 ;UART_SEND_MEM MACRO BEGIN_ADDR, SEND_LEN
+                      00093 ;-----------------------------------------------------------------------
+                      00094 
+                      00095 ;пишем начальные значения ППЗУ
+                      00096         Org 0x2100;пишем в ППЗУ (по адресу 0x00) выставляемое в модуль часов время
+2100   0016           00097         DE 0x16 ;часы
+2101   0045           00098         DE 0x45 ;минуты
+2102   0000           00099         DE 0x00 ;секунды
+2103   0003           00100         DE .3  ;день недели
+2104   0021           00101         DE 0x21 ;число
+2105   0002           00102         DE 0x02 ;месяц
+2106   0018           00103         DE 0x18 ;год 
+                      00104 
+                      00105 ;основной блок программы
+                      00106         org 0x0000
+0000   2???           00107         goto start
+                      00108         org 0x0004 ;вектор прерываний
+                      00109 ;-----------------------------------------------------------------------
+0004   138B           00110         bcf INTCON,7 ;запрещаем прерывания
+                      00111         ;выясняем источник прерывания
+                      00112         ;btfsc PIR1,0 ;(TMR1IF)
+                      00113         ;goto TMR1_int ;идем на обработку прерывания от таймера 1
+                      00114 
+                      00115 ;Захват данных с дисплея весов
+                      00116         include <TM1621Capture.inc> ;захват даныых с дисплея
                       00001 ;Захват данных с весов на драйвер TM1621
                       00002 ;выполнен в виде встраиваемого файла т.к. помещается в блок обработки прерываний
                       00003 ;Блок захвата и распознавания данных с весов
@@ -682,6 +765,12 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0007                  00015 wait_WR0;ждем WR низкого
 0007   1806           00016         btfsc CS_IN ;не выходим из обработчика прерывания пока CS в низком состоянии
 0008   2???           00017         goto test_lcd_bytes
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
 0009   1886           00018         btfsc WR_IN
 000A   2???           00019         goto wait_WR0
 000B                  00020 wait_WR1
@@ -706,12 +795,6 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001B                  00039 test_lcd_bytes  
                       00040         ;если первые 3 бита не 101 (команда записи) - игнорируем - выходим
 001B   ???? ????      00041         banksel LCD_bufer
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 13
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
 001D   08??           00042         movf LCD_bufer, 0
 001E   39E0           00043         andlw 0xE0
 001F   3AA0           00044         xorlw 0xA0
@@ -741,6 +824,12 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00068 ;       btfsc STATUS,Z
                       00069 ;       goto dupl_recog ;если не надо сдвигать дем дальше
                       00070 ;       sublw .8 ;W=8-W тут на сколько нужно сдвинуть последний байт
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
                       00071 ;       movwf temp
                       00072 ;shft_last
                       00073 ;       rlf INDF,1
@@ -756,7 +845,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 Warning[207]: Found label after column 1. (SET_BANK0)
 0038                  00083         SET_BANK0
 0038   0009           00084         retfie
-                      00106         include <TM1621ClrBuf.inc>  ;очистка указателей на буфер дисплея
+                      00117         include <TM1621ClrBuf.inc>  ;очистка указателей на буфер дисплея
                       00001 ;подготовка и очистка буфера перед записью
 0039                  00002 clr_bufer
 0039   ???? ????      00003         banksel bufer_count 
@@ -765,408 +854,469 @@ Warning[207]: Found label after column 1. (SET_BANK0)
 003D   0084           00006         movwf FSR
 003E   3012           00007         movlw .18 ;
 003F   00??           00008         movwf byte_buffer ;счетчик заполненных байт буфера
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 14
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
 0040   01??           00009         clrf LCD_bufer+.17
 0041   0008           00010         return
-                      00107 ;-----------------------------------------------------------------------        
-0042                  00108 start
-0042   ???? ???? 2??? 00109         lcall initMC;<initMC.inc> Инициализация микроконтроллера
-0045   ???? ???? 2??? 00110         lcall init_LCD;<TM1621LCD.asm> инициализация дисплея    
-0048   ???? ???? 2??? 00111         lcall pause_05s ;<pauses_20MHz.asm>пауза
-004B   ???? ???? 2??? 00112         lcall clr_bufer ;<TM1621ClrBuf.inc> очистка указателей на буфер дисплея
-004E   ???? ????      00113         pagesel $
-                      00114         ;тестируем функции печати
-0050   ???? ????      00115         banksel koma
-0052   01??           00116         clrf koma
-0053   01??           00117         clrf koma+.1
-                      00118 
-                      00119         ;пишем время в часы
-                      00120         WRITE_RTC_EE 0x00
-0054   3000               M         movlw 0x00
-0055   ???? ???? 2???     M         lcall ee_read
-0058   ???? ????          M         pagesel $
-005A   ???? ????          M         banksel HH
-005C   00??               M         movwf HH
-005D   3001               M         movlw 0x00+.1
-005E   ???? ???? 2???     M         lcall ee_read
-0061   ???? ????          M         pagesel $
-0063   ???? ????          M         banksel MM
-0065   00??               M         movwf MM
-0066   3002               M         movlw 0x00+.2
-0067   ???? ???? 2???     M         lcall ee_read
-006A   ???? ????          M         pagesel $
-006C   ???? ????          M         banksel SS
-006E   00??               M         movwf SS
-006F   3003               M         movlw 0x00+.3
-0070   ???? ???? 2???     M         lcall ee_read
-0073   ???? ????          M         pagesel $
-0075   ???? ????          M         banksel WD
-0077   00??               M         movwf WD
-0078   3004               M         movlw 0x00+.4
-0079   ???? ???? 2???     M         lcall ee_read
-007C   ???? ????          M         pagesel $
-007E   ???? ????          M         banksel DD
-0080   00??               M         movwf DD
-0081   3005               M         movlw 0x00+.5
-0082   ???? ???? 2???     M         lcall ee_read
-0085   ???? ????          M         pagesel $
-0087   ???? ????          M         banksel MO
-0089   00??               M         movwf MO
-008A   3006               M         movlw 0x00+.6
-008B   ???? ???? 2???     M         lcall ee_read
-008E   ???? ????          M         pagesel $
-0090   ???? ????          M         banksel YY
-0092   00??               M         movwf YY
-0093   ???? ???? 2???     M         lcall WriteRTC
-0096   ???? ????          M         pagesel $
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 15
+                      00118 ;-----------------------------------------------------------------------        
+0042                  00119 start
+0042   ???? ???? 2??? 00120         lcall initMC;<initMC.inc> Инициализация микроконтроллера
+0045   ???? ???? 2??? 00121         lcall UART_Setup ;<UART.asm>
+0048   ???? ???? 2??? 00122         lcall init_LCD;<TM1621LCD.asm> инициализация дисплея    
+004B   ???? ???? 2??? 00123         lcall pause_05s ;<pauses_20MHz.asm>пауза
+004E   ???? ???? 2??? 00124         lcall clr_bufer ;<TM1621ClrBuf.inc> очистка указателей на буфер дисплея
+0051   ???? ???? 2??? 00125         lcall UART_TX_ON
+0054   ???? ????      00126         pagesel $
+                      00127         ;тестируем функции печати
+0056   ???? ????      00128         banksel koma
+0058   01??           00129         clrf koma
+0059   01??           00130         clrf koma+.1
+                      00131 
+                      00132         ;пишем время в часы
+                      00133         WRITE_RTC_EE 0x00
+005A   3000               M         movlw 0x00
+005B   ???? ???? 2???     M         lcall ee_read
+005E   ???? ????          M         pagesel $
+0060   ???? ????          M         banksel HH
+0062   00??               M         movwf HH
+0063   3001               M         movlw 0x00+.1
+0064   ???? ???? 2???     M         lcall ee_read
+0067   ???? ????          M         pagesel $
+0069   ???? ????          M         banksel MM
+006B   00??               M         movwf MM
+006C   3002               M         movlw 0x00+.2
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00121         ;WRITE_RTC 0x12, 0x10, 0x00,.3, 0x21, 0x02, 0x18
-                      00122         
-0098                  00123 time_to_LCD
-                      00124         ;читаем время и дату из часов
-0098   ???? ???? 2??? 00125         lcall ReadTime
-009B   ???? ????      00126         pagesel $
-                      00127         ;выводим день недели в 1ю строку
-                      00128         DW_to_1STR 
-009D   ???? ????          M         banksel WD
-009F   08??               M         movf WD,0
-00A0   3A01               M         xorlw .1
-00A1   1903               M         btfsc STATUS,Z
-00A2   2???               M         goto its_monday
-00A3   08??               M         movf WD,0
-00A4   3A02               M         xorlw .2
-00A5   1903               M         btfsc STATUS,Z
-00A6   2???               M         goto its_tuesday
-00A7   08??               M         movf WD,0
-00A8   3A03               M         xorlw .3
-00A9   1903               M         btfsc STATUS,Z
-00AA   2???               M         goto its_wednesday
-00AB   08??               M         movf WD,0
-00AC   3A04               M         xorlw .4
-00AD   1903               M         btfsc STATUS,Z
-00AE   2???               M         goto its_thirsday
-00AF   08??               M         movf WD,0
-00B0   3A05               M         xorlw .5
-00B1   1903               M         btfsc STATUS,Z
-00B2   2???               M         goto its_friday
-00B3   08??               M         movf WD,0
-00B4   3A06               M         xorlw .6
-00B5   1903               M         btfsc STATUS,Z
-00B6   2???               M         goto its_saturday
-00B7                      M its_sunday
+006D   ???? ???? 2???     M         lcall ee_read
+0070   ???? ????          M         pagesel $
+0072   ???? ????          M         banksel SS
+0074   00??               M         movwf SS
+0075   3003               M         movlw 0x00+.3
+0076   ???? ???? 2???     M         lcall ee_read
+0079   ???? ????          M         pagesel $
+007B   ???? ????          M         banksel WD
+007D   00??               M         movwf WD
+007E   3004               M         movlw 0x00+.4
+007F   ???? ???? 2???     M         lcall ee_read
+0082   ???? ????          M         pagesel $
+0084   ???? ????          M         banksel DD
+0086   00??               M         movwf DD
+0087   3005               M         movlw 0x00+.5
+0088   ???? ???? 2???     M         lcall ee_read
+008B   ???? ????          M         pagesel $
+008D   ???? ????          M         banksel MO
+008F   00??               M         movwf MO
+0090   3006               M         movlw 0x00+.6
+0091   ???? ???? 2???     M         lcall ee_read
+0094   ???? ????          M         pagesel $
+0096   ???? ????          M         banksel YY
+0098   00??               M         movwf YY
+0099   ???? ???? 2???     M         lcall WriteRTC
+009C   ???? ????          M         pagesel $
+                      00134         ;WRITE_RTC 0x17, 0x30, 0x00,.5, 0x02, 0x03, 0x18
+                      00135         
+009E                  00136 time_to_LCD
+                      00137         ;читаем время и дату из часов
+009E   ???? ???? 2??? 00138         lcall ReadRTCData ;ReadTime
+00A1   ???? ????      00139         pagesel $
+                      00140         ;выводим день недели в 1ю строку
+                      00141         DW_to_1STR 
+00A3   ???? ????          M         banksel WD
+00A5   08??               M         movf WD,0
+00A6   3A01               M         xorlw .1
+00A7   1903               M         btfsc STATUS,Z
+00A8   2???               M         goto its_monday
+00A9   08??               M         movf WD,0
+00AA   3A02               M         xorlw .2
+00AB   1903               M         btfsc STATUS,Z
+00AC   2???               M         goto its_tuesday
+00AD   08??               M         movf WD,0
+00AE   3A03               M         xorlw .3
+00AF   1903               M         btfsc STATUS,Z
+00B0   2???               M         goto its_wednesday
+00B1   08??               M         movf WD,0
+00B2   3A04               M         xorlw .4
+00B3   1903               M         btfsc STATUS,Z
+00B4   2???               M         goto its_thirsday
+00B5   08??               M         movf WD,0
+00B6   3A05               M         xorlw .5
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B7   1903               M         btfsc STATUS,Z
+00B8   2???               M         goto its_friday
+00B9   08??               M         movf WD,0
+00BA   3A06               M         xorlw .6
+00BB   1903               M         btfsc STATUS,Z
+00BC   2???               M         goto its_saturday
+00BD                      M its_sunday
                           M         PRINT_STR_1 ' ','5','U','n',' '
-00B7   ???? ????          M         banksel seg1_1
-00B9   3020               M         movlw ' '
-00BA   00??               M         movwf seg1_1
-00BB   3035               M         movlw '5'
-00BC   00??               M         movwf seg1_2
-00BD   3055               M         movlw 'U'
-00BE   00??               M         movwf seg1_3
-00BF   306E               M         movlw 'n'
-00C0   00??               M         movwf seg1_4
-00C1   3020               M         movlw ' '
-00C2   00??               M         movwf seg1_5    
-00C3   30??               M         movlw seg1_1            
-00C4   ???? ???? 2???     M         lcall PrintFirstStr
-00C7   ???? ????          M         pagesel $
-00C9   2???               M         goto exit_dw_test  
-00CA                      M its_monday
+00BD   ???? ????          M         banksel seg1_1
+00BF   3020               M         movlw ' '
+00C0   00??               M         movwf seg1_1
+00C1   3035               M         movlw '5'
+00C2   00??               M         movwf seg1_2
+00C3   3055               M         movlw 'U'
+00C4   00??               M         movwf seg1_3
+00C5   306E               M         movlw 'n'
+00C6   00??               M         movwf seg1_4
+00C7   3020               M         movlw ' '
+00C8   00??               M         movwf seg1_5    
+00C9   30??               M         movlw seg1_1            
+00CA   ???? ???? 2???     M         lcall PrintFirstStr
+00CD   ???? ????          M         pagesel $
+00CF   2???               M         goto exit_dw_test  
+00D0                      M its_monday
                           M         PRINT_STR_1 ' ','n','n','0','n'
-00CA   ???? ????          M         banksel seg1_1
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 16
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-00CC   3020               M         movlw ' '
-00CD   00??               M         movwf seg1_1
-00CE   306E               M         movlw 'n'
-00CF   00??               M         movwf seg1_2
-00D0   306E               M         movlw 'n'
-00D1   00??               M         movwf seg1_3
-00D2   3030               M         movlw '0'
-00D3   00??               M         movwf seg1_4
+00D0   ???? ????          M         banksel seg1_1
+00D2   3020               M         movlw ' '
+00D3   00??               M         movwf seg1_1
 00D4   306E               M         movlw 'n'
-00D5   00??               M         movwf seg1_5    
-00D6   30??               M         movlw seg1_1            
-00D7   ???? ???? 2???     M         lcall PrintFirstStr
-00DA   ???? ????          M         pagesel $
-00DC   2???               M         goto exit_dw_test 
-00DD                      M its_tuesday
+00D5   00??               M         movwf seg1_2
+00D6   306E               M         movlw 'n'
+00D7   00??               M         movwf seg1_3
+00D8   3030               M         movlw '0'
+00D9   00??               M         movwf seg1_4
+00DA   306E               M         movlw 'n'
+00DB   00??               M         movwf seg1_5    
+00DC   30??               M         movlw seg1_1            
+00DD   ???? ???? 2???     M         lcall PrintFirstStr
+00E0   ???? ????          M         pagesel $
+00E2   2???               M         goto exit_dw_test 
+00E3                      M its_tuesday
                           M         PRINT_STR_1 ' ','t','U','E','5' 
-00DD   ???? ????          M         banksel seg1_1
-00DF   3020               M         movlw ' '
-00E0   00??               M         movwf seg1_1
-00E1   3074               M         movlw 't'
-00E2   00??               M         movwf seg1_2
-00E3   3055               M         movlw 'U'
-00E4   00??               M         movwf seg1_3
-00E5   3045               M         movlw 'E'
-00E6   00??               M         movwf seg1_4
-00E7   3035               M         movlw '5'
-00E8   00??               M         movwf seg1_5    
-00E9   30??               M         movlw seg1_1            
-00EA   ???? ???? 2???     M         lcall PrintFirstStr
-00ED   ???? ????          M         pagesel $
-00EF   2???               M         goto exit_dw_test
-00F0                      M its_wednesday
+00E3   ???? ????          M         banksel seg1_1
+00E5   3020               M         movlw ' '
+00E6   00??               M         movwf seg1_1
+00E7   3074               M         movlw 't'
+00E8   00??               M         movwf seg1_2
+00E9   3055               M         movlw 'U'
+00EA   00??               M         movwf seg1_3
+00EB   3045               M         movlw 'E'
+00EC   00??               M         movwf seg1_4
+00ED   3035               M         movlw '5'
+00EE   00??               M         movwf seg1_5    
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00EF   30??               M         movlw seg1_1            
+00F0   ???? ???? 2???     M         lcall PrintFirstStr
+00F3   ???? ????          M         pagesel $
+00F5   2???               M         goto exit_dw_test
+00F6                      M its_wednesday
                           M         PRINT_STR_1 ' ','U','U','E','d'
-00F0   ???? ????          M         banksel seg1_1
-00F2   3020               M         movlw ' '
-00F3   00??               M         movwf seg1_1
-00F4   3055               M         movlw 'U'
-00F5   00??               M         movwf seg1_2
-00F6   3055               M         movlw 'U'
-00F7   00??               M         movwf seg1_3
-00F8   3045               M         movlw 'E'
-00F9   00??               M         movwf seg1_4
-00FA   3064               M         movlw 'd'
-00FB   00??               M         movwf seg1_5    
-00FC   30??               M         movlw seg1_1            
-00FD   ???? ???? 2???     M         lcall PrintFirstStr
-0100   ???? ????          M         pagesel $
-0102   2???               M         goto exit_dw_test
-0103                      M its_thirsday
+00F6   ???? ????          M         banksel seg1_1
+00F8   3020               M         movlw ' '
+00F9   00??               M         movwf seg1_1
+00FA   3055               M         movlw 'U'
+00FB   00??               M         movwf seg1_2
+00FC   3055               M         movlw 'U'
+00FD   00??               M         movwf seg1_3
+00FE   3045               M         movlw 'E'
+00FF   00??               M         movwf seg1_4
+0100   3064               M         movlw 'd'
+0101   00??               M         movwf seg1_5    
+0102   30??               M         movlw seg1_1            
+0103   ???? ???? 2???     M         lcall PrintFirstStr
+0106   ???? ????          M         pagesel $
+0108   2???               M         goto exit_dw_test
+0109                      M its_thirsday
                           M         PRINT_STR_1 ' ','t','H','1','r'
-0103   ???? ????          M         banksel seg1_1
-0105   3020               M         movlw ' '
-0106   00??               M         movwf seg1_1
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 17
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0107   3074               M         movlw 't'
-0108   00??               M         movwf seg1_2
-0109   3048               M         movlw 'H'
-010A   00??               M         movwf seg1_3
-010B   3031               M         movlw '1'
-010C   00??               M         movwf seg1_4
-010D   3072               M         movlw 'r'
-010E   00??               M         movwf seg1_5    
-010F   30??               M         movlw seg1_1            
-0110   ???? ???? 2???     M         lcall PrintFirstStr
-0113   ???? ????          M         pagesel $
-0115   2???               M         goto exit_dw_test 
-0116                      M its_friday
+0109   ???? ????          M         banksel seg1_1
+010B   3020               M         movlw ' '
+010C   00??               M         movwf seg1_1
+010D   3074               M         movlw 't'
+010E   00??               M         movwf seg1_2
+010F   3048               M         movlw 'H'
+0110   00??               M         movwf seg1_3
+0111   3031               M         movlw '1'
+0112   00??               M         movwf seg1_4
+0113   3072               M         movlw 'r'
+0114   00??               M         movwf seg1_5    
+0115   30??               M         movlw seg1_1            
+0116   ???? ???? 2???     M         lcall PrintFirstStr
+0119   ???? ????          M         pagesel $
+011B   2???               M         goto exit_dw_test 
+011C                      M its_friday
                           M         PRINT_STR_1 ' ','F','r','1',' ' 
-0116   ???? ????          M         banksel seg1_1
-0118   3020               M         movlw ' '
-0119   00??               M         movwf seg1_1
-011A   3046               M         movlw 'F'
-011B   00??               M         movwf seg1_2
-011C   3072               M         movlw 'r'
-011D   00??               M         movwf seg1_3
-011E   3031               M         movlw '1'
-011F   00??               M         movwf seg1_4
-0120   3020               M         movlw ' '
-0121   00??               M         movwf seg1_5    
-0122   30??               M         movlw seg1_1            
-0123   ???? ???? 2???     M         lcall PrintFirstStr
-0126   ???? ????          M         pagesel $
-0128   2???               M         goto exit_dw_test
-0129                      M its_saturday
+011C   ???? ????          M         banksel seg1_1
+011E   3020               M         movlw ' '
+011F   00??               M         movwf seg1_1
+0120   3046               M         movlw 'F'
+0121   00??               M         movwf seg1_2
+0122   3072               M         movlw 'r'
+0123   00??               M         movwf seg1_3
+0124   3031               M         movlw '1'
+0125   00??               M         movwf seg1_4
+0126   3020               M         movlw ' '
+0127   00??               M         movwf seg1_5    
+0128   30??               M         movlw seg1_1            
+0129   ???? ???? 2???     M         lcall PrintFirstStr
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+012C   ???? ????          M         pagesel $
+012E   2???               M         goto exit_dw_test
+012F                      M its_saturday
                           M         PRINT_STR_1 ' ','5','A','t',' '         
-0129   ???? ????          M         banksel seg1_1
-012B   3020               M         movlw ' '
-012C   00??               M         movwf seg1_1
-012D   3035               M         movlw '5'
-012E   00??               M         movwf seg1_2
-012F   3041               M         movlw 'A'
-0130   00??               M         movwf seg1_3
-0131   3074               M         movlw 't'
-0132   00??               M         movwf seg1_4
-0133   3020               M         movlw ' '
-0134   00??               M         movwf seg1_5    
-0135   30??               M         movlw seg1_1            
-0136   ???? ???? 2???     M         lcall PrintFirstStr
-0139   ???? ????          M         pagesel $
-013B                      M exit_dw_test
-                      00129         ;выводим дату во 2ю строку
-                      00130         DATE_to_2STR
-013B   ???? ????          M         banksel DD
-013D   0E??               M         swapf DD,0
-013E   390F               M         andlw 0x0F
-013F   3E30               M         addlw 0x30
-0140   ???? ????          M         banksel seg2_1
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 18
+012F   ???? ????          M         banksel seg1_1
+0131   3020               M         movlw ' '
+0132   00??               M         movwf seg1_1
+0133   3035               M         movlw '5'
+0134   00??               M         movwf seg1_2
+0135   3041               M         movlw 'A'
+0136   00??               M         movwf seg1_3
+0137   3074               M         movlw 't'
+0138   00??               M         movwf seg1_4
+0139   3020               M         movlw ' '
+013A   00??               M         movwf seg1_5    
+013B   30??               M         movlw seg1_1            
+013C   ???? ???? 2???     M         lcall PrintFirstStr
+013F   ???? ????          M         pagesel $
+0141                      M exit_dw_test
+                      00142         ;выводим дату во 2ю строку
+                      00143         DATE_to_2STR
+0141   ???? ????          M         banksel DD
+0143   0E??               M         swapf DD,0
+0144   390F               M         andlw 0x0F
+0145   3E30               M         addlw 0x30
+0146   ???? ????          M         banksel seg2_1
+0148   00??               M         movwf seg2_1
+                          M 
+0149   ???? ????          M         banksel DD
+014B   08??               M         movf DD,0
+014C   390F               M         andlw 0x0F
+014D   3E30               M         addlw 0x30      
+014E   ???? ????          M         banksel seg2_2
+0150   00??               M         movwf seg2_2
+0151   302D               M         movlw '-'
+0152   00??               M         movwf seg2_3
+                          M 
+0153   ???? ????          M         banksel MO
+0155   0E??               M         swapf MO,0
+0156   390F               M         andlw 0x0F
+0157   3E30               M         addlw 0x30
+0158   ???? ????          M         banksel seg2_4
+015A   00??               M         movwf seg2_4
+                          M 
+015B   ???? ????          M         banksel MO
+015D   08??               M         movf MO,0
+015E   390F               M         andlw 0x0F
+015F   3E30               M         addlw 0x30      
+0160   ???? ????          M         banksel seg2_5
+0162   00??               M         movwf seg2_5
+                          M 
+0163   30??               M         movlw seg2_1            
+0164   ???? ???? 2???     M         lcall PrintSecondStr
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0142   00??               M         movwf seg2_1
+0167   ???? ????          M         pagesel $
+                      00144         ;выводим время в 3ю строку
+                      00145         TIME_to_3STR
+0169   ???? ????          M         banksel HH
+016B   0E??               M         swapf HH,0
+016C   390F               M         andlw 0x0F
+016D   3E30               M         addlw 0x30
+016E   ???? ????          M         banksel seg3_1
+0170   00??               M         movwf seg3_1
                           M 
-0143   ???? ????          M         banksel DD
-0145   08??               M         movf DD,0
-0146   390F               M         andlw 0x0F
-0147   3E30               M         addlw 0x30      
-0148   ???? ????          M         banksel seg2_2
-014A   00??               M         movwf seg2_2
-014B   302D               M         movlw '-'
-014C   00??               M         movwf seg2_3
+0171   ???? ????          M         banksel HH
+0173   08??               M         movf HH,0
+0174   390F               M         andlw 0x0F
+0175   3E30               M         addlw 0x30      
+0176   ???? ????          M         banksel seg3_2
+0178   00??               M         movwf seg3_2
                           M 
-014D   ???? ????          M         banksel MO
-014F   0E??               M         swapf MO,0
-0150   390F               M         andlw 0x0F
-0151   3E30               M         addlw 0x30
-0152   ???? ????          M         banksel seg2_4
-0154   00??               M         movwf seg2_4
+0179   ???? ????          M         banksel MM
+017B   0E??               M         swapf MM,0
+017C   390F               M         andlw 0x0F
+017D   3E30               M         addlw 0x30
+017E   ???? ????          M         banksel seg3_3
+0180   00??               M         movwf seg3_3
                           M 
-0155   ???? ????          M         banksel MO
-0157   08??               M         movf MO,0
-0158   390F               M         andlw 0x0F
-0159   3E30               M         addlw 0x30      
-015A   ???? ????          M         banksel seg2_5
-015C   00??               M         movwf seg2_5
+0181   ???? ????          M         banksel MM
+0183   08??               M         movf MM,0
+0184   390F               M         andlw 0x0F
+0185   3E30               M         addlw 0x30      
+0186   ???? ????          M         banksel seg3_4
+0188   00??               M         movwf seg3_4
                           M 
-015D   30??               M         movlw seg2_1            
-015E   ???? ???? 2???     M         lcall PrintSecondStr
-0161   ???? ????          M         pagesel $
-                      00131         ;выводим время в 3ю строку
-                      00132         TIME_to_3STR
-0163   ???? ????          M         banksel HH
-0165   0E??               M         swapf HH,0
-0166   390F               M         andlw 0x0F
-0167   3E30               M         addlw 0x30
-0168   ???? ????          M         banksel seg3_1
-016A   00??               M         movwf seg3_1
+0189   ???? ????          M         banksel SS
+018B   0E??               M         swapf SS,0
+018C   390F               M         andlw 0x0F
+018D   3E30               M         addlw 0x30
+018E   ???? ????          M         banksel seg3_5
+0190   00??               M         movwf seg3_5
                           M 
-016B   ???? ????          M         banksel HH
-016D   08??               M         movf HH,0
-016E   390F               M         andlw 0x0F
-016F   3E30               M         addlw 0x30      
-0170   ???? ????          M         banksel seg3_2
-0172   00??               M         movwf seg3_2
-                          M 
-0173   ???? ????          M         banksel MM
-0175   0E??               M         swapf MM,0
-0176   390F               M         andlw 0x0F
-0177   3E30               M         addlw 0x30
-0178   ???? ????          M         banksel seg3_3
-017A   00??               M         movwf seg3_3
-                          M 
-017B   ???? ????          M         banksel MM
-017D   08??               M         movf MM,0
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 19
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-017E   390F               M         andlw 0x0F
-017F   3E30               M         addlw 0x30      
-0180   ???? ????          M         banksel seg3_4
-0182   00??               M         movwf seg3_4
-                          M 
-0183   ???? ????          M         banksel SS
-0185   0E??               M         swapf SS,0
-0186   390F               M         andlw 0x0F
-0187   3E30               M         addlw 0x30
-0188   ???? ????          M         banksel seg3_5
-018A   00??               M         movwf seg3_5
-                          M 
-018B   ???? ????          M         banksel SS
-018D   08??               M         movf SS,0
-018E   390F               M         andlw 0x0F
-018F   3E30               M         addlw 0x30      
-0190   ???? ????          M         banksel seg3_6
-0192   00??               M         movwf seg3_6
+0191   ???? ????          M         banksel SS
+0193   08??               M         movf SS,0
+0194   390F               M         andlw 0x0F
+0195   3E30               M         addlw 0x30      
+0196   ???? ????          M         banksel seg3_6
+0198   00??               M         movwf seg3_6
                           M         
-0193   30??               M         movlw seg3_1            
-0194   ???? ???? 2???     M         lcall PrintThirdStr
-0197   ???? ????          M         pagesel $
-                      00133 
-0199   ???? ???? 2??? 00134         lcall pause_1s
-019C   ???? ????      00135         pagesel $
-                      00136 ;       bsf INTCON,7
-019E   2???           00137         goto time_to_LCD
-                      00138 
-                      00139 ;Распознавание пришедших данных
-                      00140 
-                      00141 ;Определяем превышен ли минимальный вес реакции
-                      00142 
-                      00143 ;Если превышен засекаем установленное в настройках время
-                      00144 
-                      00145 ;Если время прошло, а данные не поменялись - отправляем их на сервер
+0199   30??               M         movlw seg3_1            
+019A   ???? ???? 2???     M         lcall PrintThirdStr
+019D   ???? ????          M         pagesel $
                       00146 
-                      00147 ;Если отправка не удалась - сохраняем данные во внутренней памяти
-                      00148 
-                      00149 ;Инициализация микроконтроллера
-                      00150         include <initMC.inc>
-                      00001 ;Инициализация МК с указанием выводов, вкл/выкл переферии
-019F                  00002 initMC
-019F   1683 1703      00003         banksel ANSEL
-01A1   0188           00004         clrf ANSEL
-01A2   0189           00005         clrf ANSELH
-01A3   0185           00006         clrf WDTCON
-01A4   1283 1703      00007         banksel CM1CON0
-01A6   0187           00008         clrf CM1CON0    ;Вимкнути компаратори
-01A7   0188           00009         clrf CM2CON0
-01A8   1283 1303      00010         banksel T1CON
-01AA   3031           00011         movlw b'00110001'
-01AB   0090           00012         movwf   T1CON ;вкл TMR1 коэф 1:8 внутренний тактовый сигнал
-01AC   1683 1303      00013         banksel VRCON
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 20
+                      00147         UART_SEND_VAL SS
+019F   ???? ????          M         banksel SS
+01A1   08??               M         movf SS,0
+01A2   ???? ???? 2???     M         lcall SendBytetoUART
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-01AE   1397           00014         bcf     VRCON, VREN      ;Вимкнути джерело опорної напруги
-01AF   1317           00015         bcf     VRCON, VROE ;вольтаж ИОН отключен от RA2
-01B0   30A8           00016         movlw b'10101000'
-01B1   0081           00017         movwf OPTION_REG 
+01A5   ???? ????          M         pagesel $
+                      00148 
+                      00149         UART_SEND_MEM HH, 7
+01A7   ???? ????          M         banksel HH
+01A9   08??               M         movf HH,0
+01AA   ???? ????          M         banksel UART_Buf
+01AC   00??               M         movwf UART_Buf
+                          M 
+01AD   ???? ????          M         banksel HH
+01AF   08??               M         movf HH+.1,0
+01B0   ???? ????          M         banksel UART_Buf
+01B2   00??               M         movwf UART_Buf+.1
+                          M 
+01B3   ???? ????          M         banksel HH
+01B5   08??               M         movf HH+.2,0
+01B6   ???? ????          M         banksel UART_Buf
+01B8   00??               M         movwf UART_Buf+.2
+                          M 
+01B9   ???? ????          M         banksel HH
+01BB   08??               M         movf HH+.3,0
+01BC   ???? ????          M         banksel UART_Buf
+01BE   00??               M         movwf UART_Buf+.3
+                          M 
+01BF   ???? ????          M         banksel HH
+01C1   08??               M         movf HH+.4,0
+01C2   ???? ????          M         banksel UART_Buf
+01C4   00??               M         movwf UART_Buf+.4
+                          M 
+01C5   ???? ????          M         banksel HH
+01C7   08??               M         movf HH+.5,0
+01C8   ???? ????          M         banksel UART_Buf
+01CA   00??               M         movwf UART_Buf+.5
+                          M 
+01CB   ???? ????          M         banksel HH
+01CD   08??               M         movf HH+.6,0
+01CE   ???? ????          M         banksel UART_Buf
+01D0   00??               M         movwf UART_Buf+.6
+                          M 
+01D1   ???? ????          M         banksel HH
+01D3   08??               M         movf HH+.7,0
+01D4   ???? ????          M         banksel UART_Buf
+01D6   00??               M         movwf UART_Buf+.7
+                          M 
+01D7   ???? ????          M         banksel TX_LEN                  
+01D9   3007               M         movlw 7
+01DA   00??               M         movwf TX_LEN
+01DB   ???? ???? 2???     M         lcall SendPackettoUART
+01DE   ???? ????          M         pagesel $
+                      00150 
+01E0   ???? ???? 2??? 00151         lcall pause_1s
+01E3   ???? ????      00152         pagesel $
+                      00153 ;       bsf INTCON,7
+01E5   2???           00154         goto time_to_LCD
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00155 
+                      00156 ;Распознавание пришедших данных
+                      00157 
+                      00158 ;Определяем превышен ли минимальный вес реакции
+                      00159 
+                      00160 ;Если превышен засекаем установленное в настройках время
+                      00161 
+                      00162 ;Если время прошло, а данные не поменялись - отправляем их на сервер
+                      00163 
+                      00164 ;Если отправка не удалась - сохраняем данные во внутренней памяти
+                      00165 
+                      00166 ;Инициализация микроконтроллера
+                      00167         include <initMC.inc>
+                      00001 ;Инициализация МК с указанием выводов, вкл/выкл переферии
+01E6                  00002 initMC
+01E6   1683 1703      00003         banksel ANSEL
+01E8   0188           00004         clrf ANSEL
+01E9   0189           00005         clrf ANSELH
+01EA   0185           00006         clrf WDTCON
+01EB   1283 1703      00007         banksel CM1CON0
+01ED   0187           00008         clrf CM1CON0    ;Вимкнути компаратори
+01EE   0188           00009         clrf CM2CON0
+01EF   1283 1303      00010         banksel T1CON
+01F1   3031           00011         movlw b'00110001'
+01F2   0090           00012         movwf   T1CON ;вкл TMR1 коэф 1:8 внутренний тактовый сигнал
+01F3   1683 1303      00013         banksel VRCON
+01F5   1397           00014         bcf     VRCON, VREN      ;Вимкнути джерело опорної напруги
+01F6   1317           00015         bcf     VRCON, VROE ;вольтаж ИОН отключен от RA2
+01F7   30A8           00016         movlw b'10101000'
+01F8   0081           00017         movwf OPTION_REG 
                       00018         ;бит 7 RBPU=1 - подтягивающие резисторы отключены
                       00019         ;бит 6 INTEDG=0 - внешнее прерывание по заднему фронту
                       00020         ;бит 5 T0CS=1 - внутренний источник приращения таймера 0 
                       00021         ;бит 4 T0SE=0 - приращение таймера по переднему фронту
                       00022         ;бит 3 PSA=1 - предделитель перед WDT 
                       00023         ;биты 2-0 RS2-RS0=000 - коэффициент предделителя 1:1
-01B2   3050           00024         movlw b'01010000';разрешение прерываний - внешнего прерывания (пока отключены)
-01B3   008B           00025         movwf INTCON ;(чтобы раньше времени не пришло прерывание)
+01F9   3050           00024         movlw b'01010000';разрешение прерываний - внешнего прерывания (пока отключены)
+01FA   008B           00025         movwf INTCON ;(чтобы раньше времени не пришло прерывание)
                       00026 ;       bsf PIE1,0 ;(TMR1IE) разрешение прерывания от таймера 1 
-01B4   1683 1303      00027         banksel TRISA
+01FB   1683 1303      00027         banksel TRISA
                       00028         ;изначально все выводы настроены на выход
-01B6   0103           00029         clrw
-01B7   0085           00030         movwf TRISA
-01B8   0087           00031         movwf TRISC
-01B9   0088           00032         movwf TRISD
-01BA   0089           00033         movwf TRISE
-01BB   0086           00034         movwf TRISB
+01FD   0103           00029         clrw
+01FE   0085           00030         movwf TRISA
+01FF   0087           00031         movwf TRISC
+0200   0088           00032         movwf TRISD
+0201   0089           00033         movwf TRISE
+0202   0086           00034         movwf TRISB
                       00035         ;согласно документации при использовании приемопередатчика PORTB<2:1>=1
                       00036         ;теперь настраивается направление выводов в зависимости от настроек
                       00037         ;поскольку регистры TRISx и PORTx по тем же адресам но в разных банках
                       00038         ;можно направления менять с учетом define
-01BC   1406           00039         bsf CS_IN ;устанавливаем входы согласно настроек дисплея
-01BD   1486           00040         bsf WR_IN
-01BE   1506           00041         bsf DATA_IN
-01BF   1283 1303      00042         banksel PORTA
-01C1   0185           00043         clrf PORTA
-01C2   0186           00044         clrf PORTB ;инициализация защелок портов
-01C3   0187           00045         clrf PORTC 
-01C4   0188           00046         clrf PORTD
-01C5   0189           00047         clrf PORTE
-01C6   1283           00048         bcf STATUS,RP0 ;переходим в нулевой банк
-01C7   100C           00049         bcf PIR1, 0
-01C8   0008           00050         return
-01C9   2???           00151         goto $
+0203   1406           00039         bsf CS_IN ;устанавливаем входы согласно настроек дисплея
+0204   1486           00040         bsf WR_IN
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0205   1506           00041         bsf DATA_IN
+0206   1283 1303      00042         banksel PORTA
+0208   0185           00043         clrf PORTA
+0209   0186           00044         clrf PORTB ;инициализация защелок портов
+020A   0187           00045         clrf PORTC 
+020B   0188           00046         clrf PORTD
+020C   0189           00047         clrf PORTE
+020D   1283           00048         bcf STATUS,RP0 ;переходим в нулевой банк
+020E   100C           00049         bcf PIR1, 0
+020F   0008           00050         return
+0210   2???           00168         goto $
 Message[303]: Program word too large.  Truncated to core size. (E0A2)
 Message[303]: Program word too large.  Truncated to core size. (F8FF)
-20A2 38FF             00152         end
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 21
+20A2 38FF             00169         end
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 24
 
 
 SYMBOL TABLE
@@ -1225,7 +1375,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 22
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 25
 
 
 SYMBOL TABLE
@@ -1284,7 +1434,7 @@ CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
 CHS3                              00000005
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 23
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 26
 
 
 SYMBOL TABLE
@@ -1339,16 +1489,17 @@ GIE                               00000007
 GO                                00000001
 GO_DONE                           00000001
 GO_NOT_DONE                       00000001
+GetUARTByte                       00000000
 HH                                00000000
 HTS                               00000002
 I2C_DATA                          00000005
-I2C_READ                          00000002
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 24
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 27
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+I2C_READ                          00000002
 I2C_START                         00000003
 I2C_STOP                          00000004
 INDF                              00000000
@@ -1401,13 +1552,13 @@ NOT_POR                           00000001
 NOT_RBPU                          00000007
 NOT_RC8                           00000006
 NOT_T1SYNC                        00000002
-NOT_TO                            00000004
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 25
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 28
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+NOT_TO                            00000004
 NOT_TX8                           00000006
 NOT_W                             00000002
 NOT_WRITE                         00000002
@@ -1460,13 +1611,13 @@ PSSBD0                            00000000
 PSSBD1                            00000001
 PSTRCON                           0000009D
 PULSR                             00000002
-PULSS                             00000003
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 26
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 29
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PULSS                             00000003
 PWM1CON                           0000009B
 PrintFirstStr                     00000000
 PrintMsg                          00000000
@@ -1519,13 +1670,13 @@ RD5                               00000005
 RD6                               00000006
 RD7                               00000007
 RE0                               00000000
-RE1                               00000001
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 27
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 30
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RE1                               00000001
 RE2                               00000002
 RE3                               00000003
 READ_WRITE                        00000002
@@ -1578,16 +1729,18 @@ STATUS                            00000003
 STRA                              00000000
 STRB                              00000001
 STRC                              00000002
-STRD                              00000003
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 28
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 31
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+STRD                              00000003
 STRSYNC                           00000004
 SWDTEN                            00000000
 SYNC                              00000004
+SendBytetoUART                    00000000
+SendPackettoUART                  00000000
 SetKoma                           00000000
 T0CS                              00000005
 T0IE                              00000005
@@ -1635,15 +1788,15 @@ TRISA5                            00000005
 TRISA6                            00000006
 TRISA7                            00000007
 TRISB                             00000086
-TRISB0                            00000000
-TRISB1                            00000001
-TRISB2                            00000002
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 29
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 32
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
 TRISB3                            00000003
 TRISB4                            00000004
 TRISB5                            00000005
@@ -1687,7 +1840,21 @@ TXIE                              00000004
 TXIF                              00000004
 TXREG                             00000019
 TXSTA                             00000098
+TX_LEN                            00000000
 UA                                00000001
+UART_Buf                          00000000
+UART_SEND_CONST                   
+UART_SEND_MEM                     
+UART_SEND_VAL                     
+UART_Setup                        00000000
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 33
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+UART_TX_OFF                       00000000
+UART_TX_ON                        00000000
 ULPWUE                            00000005
 ULPWUIE                           00000002
 ULPWUIF                           00000002
@@ -1697,12 +1864,6 @@ VR0                               00000000
 VR1                               00000001
 VR2                               00000002
 VR3                               00000003
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 30
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 VRCON                             00000097
 VREN                              00000007
 VROE                              00000006
@@ -1745,33 +1906,35 @@ YEAR_to_2STR
 YY                                00000000
 Z                                 00000002
 _.org_2_0036                      00000036
-_.org_2_004E                      0000004E
-_.org_2_0058                      00000058
-_.org_2_0061                      00000061
-_.org_2_006A                      0000006A
-_.org_2_0073                      00000073
-_.org_2_007C                      0000007C
-_.org_2_0085                      00000085
-_.org_2_008E                      0000008E
-_.org_2_0096                      00000096
-_.org_2_009B                      0000009B
-_.org_2_00C7                      000000C7
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 31
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 34
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-_.org_2_00DA                      000000DA
-_.org_2_00ED                      000000ED
-_.org_2_0100                      00000100
-_.org_2_0113                      00000113
-_.org_2_0126                      00000126
-_.org_2_0139                      00000139
-_.org_2_0161                      00000161
-_.org_2_0197                      00000197
-_.org_2_019C                      0000019C
-_.org_2_01C9                      000001C9
+_.org_2_0054                      00000054
+_.org_2_005E                      0000005E
+_.org_2_0067                      00000067
+_.org_2_0070                      00000070
+_.org_2_0079                      00000079
+_.org_2_0082                      00000082
+_.org_2_008B                      0000008B
+_.org_2_0094                      00000094
+_.org_2_009C                      0000009C
+_.org_2_00A1                      000000A1
+_.org_2_00CD                      000000CD
+_.org_2_00E0                      000000E0
+_.org_2_00F3                      000000F3
+_.org_2_0106                      00000106
+_.org_2_0119                      00000119
+_.org_2_012C                      0000012C
+_.org_2_013F                      0000013F
+_.org_2_0167                      00000167
+_.org_2_019D                      0000019D
+_.org_2_01A5                      000001A5
+_.org_2_01DE                      000001DE
+_.org_2_01E3                      000001E3
+_.org_2_0210                      00000210
 _BOR21V                           00003EFF
 _BOR40V                           00003FFF
 _BOR4V_BOR21V                     00003EFF
@@ -1802,6 +1965,12 @@ _FCMEN_OFF                        000037FF
 _FCMEN_ON                         00003FFF
 _FOSC_EC                          00003FFB
 _FOSC_EXTRC_CLKOUT                00003FFF
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 35
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _FOSC_EXTRC_NOCLKOUT              00003FFE
 _FOSC_HS                          00003FFA
 _FOSC_INTRC_CLKOUT                00003FFD
@@ -1815,12 +1984,6 @@ _IDLOC2                           00002002
 _IDLOC3                           00002003
 _IESO_OFF                         00003BFF
 _IESO_ON                          00003FFF
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 32
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _INTOSC                           00003FFD
 _INTOSCIO                         00003FFC
 _INTRC_OSC_CLKOUT                 00003FFD
@@ -1852,17 +2015,23 @@ clr_bufer                         00000039
 ee_read                           00000000
 ee_write                          00000000
 empty                             00000000
-exit_dw_test                      0000013B
+exit_dw_test                      00000141
 exit_int                          00000033
-initMC                            0000019F
+initMC                            000001E6
 init_LCD                          00000000
-its_friday                        00000116
-its_monday                        000000CA
-its_saturday                      00000129
-its_sunday                        000000B7
-its_thirsday                      00000103
-its_tuesday                       000000DD
-its_wednesday                     000000F0
+its_friday                        0000011C
+its_monday                        000000D0
+its_saturday                      0000012F
+its_sunday                        000000BD
+its_thirsday                      00000109
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 36
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+its_tuesday                       000000E3
+its_wednesday                     000000F6
 koma                              00000000
 koma_set                          00000000
 loop_cnt                          00000015
@@ -1874,12 +2043,6 @@ pause_5s                          00000000
 seg1_1                            00000000
 seg1_2                            00000000
 seg1_3                            00000000
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 33
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 seg1_4                            00000000
 seg1_5                            00000000
 seg2_1                            00000000
@@ -1920,6 +2083,12 @@ simbF                             00000017
 simbG                             0000005D
 simbH                             00000067
 simbJ                             0000006C
+MPASM  5.51                          SCPA.ASM   3-2-2018  18:39:00         PAGE 37
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 simbL                             0000000D
 simbP                             00000037
 simbU                             0000006D
@@ -1933,14 +2102,8 @@ simbr                             00000006
 simbt                             0000000F
 start                             00000042
 temp_exit                         0000002F
-MPASM  5.51                          SCPA.ASM   2-21-2018  16:35:36         PAGE 34
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 test_lcd_bytes                    0000001B
-time_to_LCD                       00000098
+time_to_LCD                       0000009E
 wait_WR0                          00000007
 wait_WR1                          0000000B
 
